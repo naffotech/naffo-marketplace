@@ -1,0 +1,11 @@
+{
+  "name": "naffo",
+  "description": "Naffo ERP assistant for Claude Code — guided workflows and skills for sales invoices, purchase bills, accounting, inventory, stock reports, GST, dairy procurement (collection → gate pass → QC → weighbridge → settlement), CRM follow-ups, and task management.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Naffo Tech"
+  },
+  "homepage": "https://github.com/naffotech/naffo-marketplace",
+  "repository": "https://github.com/naffotech/naffo-marketplace",
+  "license": "MIT"
+}

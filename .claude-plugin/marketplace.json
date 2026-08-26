@@ -1,0 +1,26 @@
+{
+  "name": "naffo-marketplace",
+  "owner": {
+    "name": "Naffo Tech",
+    "url": "https://github.com/naffotech"
+  },
+  "metadata": {
+    "description": "Official Claude Code plugins and skills for the Naffo ERP platform — dairy procurement, accounting, sales, inventory, CRM and more.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "naffo",
+      "source": "./plugins/naffo",
+      "description": "Work with Naffo ERP from Claude Code — guided workflows for sales, purchases, accounting, inventory, dairy procurement, and CRM.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Naffo Tech"
+      },
+      "homepage": "https://github.com/naffotech/naffo-marketplace",
+      "repository": "https://github.com/naffotech/naffo-marketplace",
+      "license": "MIT",
+      "keywords": ["naffo", "erp", "dairy", "accounting", "inventory"]
+    }
+  ]
+}
