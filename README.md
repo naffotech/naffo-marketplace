@@ -1,44 +1,103 @@
 # Naffo Marketplace
 
-Official Claude Code plugins and skills for the **Naffo ERP** platform — sales, purchases, accounting, inventory, GST, dairy procurement (center → collection → gate pass → QC → weighbridge → settlement), CRM, and task management.
+Official Claude Code plugins and skills for the **Naffo ERP** platform — sales,
+purchases, accounting, inventory, GST, dairy procurement, production planning,
+demand forecasting, inventory optimization, CRM, and task management.
 
 ## Install
 
 In Claude Code, run:
 
-```text
+```
 /plugin marketplace add naffotech/naffo-marketplace
 /plugin install naffo
 ```
 
-That's it — the `naffo` plugin and its skills are now available in your session.
+Then connect your Naffo MCP server (Settings → Integrations → MCP in your
+Naffo account) and verify the connection:
+
+```
+Who am I in Naffo?
+```
+
+---
 
 ## What's inside
 
-### Plugins
+### Plugin: `naffo`
 
-| Plugin | Description |
+| Component | What it does |
 |---|---|
-| [`naffo`](./plugins/naffo) | Guided workflows & skills for working with Naffo ERP from Claude Code |
+| Skill: **naffo-erp-guide** | Core tool usage rules — resolving parties/products before writes, required fields, dairy lifecycle order, report selection |
+| Skill: **naffo-management** | Day-to-day operations — invoices, payments, stock checks, dairy procurement, CRM follow-ups, financial reports |
+| Skill: **naffo-optimization** | Demand forecasting, production planning, inventory optimization, stock transfer recommendations |
+| Command: `/naffo-setup` | Quick-start connection guide |
+| Command: `/naffo-forecast` | Instant demand forecast for a product |
+| Command: `/naffo-analyze` | Full inventory health analysis (days of supply, expiry risk, reorder alerts) |
+| Command: `/naffo-plan` | Create a production plan from demand + BOMs + capacity |
 
-### Skills included
+---
 
-- **naffo-erp-guide** — best practices for using Naffo MCP tools correctly: resolving parties/products before writing data, required-field validation for invoices/payments, dairy procurement workflow order, and report selection.
+## Skills overview
+
+### `naffo-management` — Operational ERP
+
+Handles everything that has **already happened** or needs to be **recorded now**.
+
+Example prompts:
+- *"What's my current stock of paneer?"*
+- *"Create a sale invoice for Bhargav Dairy — 50 kg paneer at ₹320/kg, cash payment"*
+- *"Show me overdue receivables older than 30 days"*
+- *"Record a ₹45,000 payment to Raj Packaging"*
+- *"What happened in dairy procurement today?"*
+- *"Show me this month's P&L"*
+
+### `naffo-optimization` — Forecasting & Planning
+
+Handles **forward-looking, analytical, and optimization** questions.
+
+Example prompts:
+- *"How much paneer should we produce next week?"*
+- *"Which outlets are running low on milk sachets?"*
+- *"Forecast demand for our top 5 products for the next 30 days"*
+- *"Which batches should we transfer before they expire?"*
+- *"Create a production plan for September"*
+- *"Kitna order karein SMP-500 ke liye?"*
+
+---
+
+## Slash commands
+
+```
+/naffo-setup     — how to connect Naffo MCP to Claude Code
+/naffo-forecast  — demand forecast for a product (prompts for details)
+/naffo-analyze   — full inventory health check
+/naffo-plan      — production plan from demand + BOMs + capacity
+```
+
+---
 
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
 - A Naffo account with MCP access enabled (Settings → Integrations → MCP)
 
+---
+
 ## Updating
 
-```text
+```
 /plugin update naffo
 ```
 
+---
+
 ## Contributing / Issues
 
-Open an issue on this repository or contact the Naffo team.
+Open an issue at [naffotech/naffo-marketplace](https://github.com/naffotech/naffo-marketplace)
+or contact the Naffo team.
+
+---
 
 ## License
 

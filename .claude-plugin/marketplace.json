@@ -5,22 +5,31 @@
     "url": "https://github.com/naffotech"
   },
   "metadata": {
-    "description": "Official Claude Code plugins and skills for the Naffo ERP platform — dairy procurement, accounting, sales, inventory, CRM and more.",
-    "version": "1.0.0"
+    "description": "Official Claude Code plugins and skills for the Naffo ERP platform — dairy procurement, accounting, sales, inventory, demand forecasting, production planning, and optimization.",
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "naffo",
       "source": "./plugins/naffo",
-      "description": "Work with Naffo ERP from Claude Code — guided workflows for sales, purchases, accounting, inventory, dairy procurement, and CRM.",
-      "version": "1.0.0",
+      "description": "Work with Naffo ERP from Claude Code — operational management (invoices, payments, stock, dairy, CRM, reports) and business planning (demand forecasting, production planning, inventory optimization, stock transfers).",
+      "version": "1.1.0",
       "author": {
         "name": "Naffo Tech"
       },
       "homepage": "https://github.com/naffotech/naffo-marketplace",
       "repository": "https://github.com/naffotech/naffo-marketplace",
       "license": "MIT",
-      "keywords": ["naffo", "erp", "dairy", "accounting", "inventory"]
+      "keywords": [
+        "naffo",
+        "erp",
+        "dairy",
+        "accounting",
+        "inventory",
+        "forecasting",
+        "production-planning",
+        "optimization"
+      ]
     }
   ]
 }
