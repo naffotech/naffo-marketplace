@@ -6,7 +6,7 @@ with the [Naffo ERP](https://naffo.tech) platform via its MCP server.
 ## Install
 
 ```bash
-# Skills only (Codex, Cursor, Windsurf, Claude Code, etc.)
+# Skills only (Codex, Cursor, Windsurf, Claude Code, Gemini, ChatGPT, etc.)
 npx skills add naffotech/naffo-marketplace
 
 # Full plugin (Claude Code only)
@@ -15,37 +15,49 @@ npx skills add naffotech/naffo-marketplace
 # /plugin install naffo
 ```
 
+## Connect your MCP server
+
+1. Go to naffo.tech → Settings → Integrations → MCP
+2. Copy your personal MCP server URL and transport type
+3. Add it to your agent's MCP configuration:
+
+```bash
+# Claude Code
+claude mcp add naffo --transport http <your-mcp-url>
+
+# Any MCP-compatible agent
+# Add { "naffo": { "type": "http", "url": "<your-mcp-url>" } } to mcp config
+```
+
 ## Available skills
 
 ### naffo-erp-guide (`skills/naffo-erp-guide/SKILL.md`)
 Core rules for working with Naffo tools correctly.
+- Always start with `naffo_navigate` to get the right tools for the task
 - Never invent IDs, dates, quantities, or rates
 - Always resolve parties before writing: `naffo_search_party`
 - Always resolve products before writing: `naffo_search_item`
 - Confirm every financial write with the user before executing
-- Golden tool sequence: navigate → read → confirm → write
+- Golden write sequence: navigate → resolve → confirm → write
 
 ### naffo-management (`skills/naffo-management/SKILL.md`)
 Real-time operational workflows.
 - Sales/purchase invoices, receipts, payments
-- Stock checks, inventory transfers
-- Dairy procurement lifecycle (gate pass → QC → weighbridge → settlement)
+- Stock checks and inventory reports
+- Dairy procurement lifecycle (gate pass → collection → QC → weighbridge → settlement)
+- Procurement workflow (MR → RFQ → PO → GRN → QC)
 - CRM leads, tasks, follow-ups
-- Financial reports (P&L, balance sheet, trial balance, GST)
+- Financial reports (trial balance, balance sheet, P&L day book, GST)
 
 ### naffo-optimization (`skills/naffo-optimization/SKILL.md`)
 Forward-looking planning and analytics.
-- Demand forecasting with confidence tiers
-- Production planning and BOM-aware scheduling
-- Stock transfer recommendations across outlets
-- Cash flow planning and vendor payment prioritisation
+- Demand forecasting with P10/P50/P90 confidence tiers
+- Inventory health (days of supply, expiry risk, low-stock alerts)
+- Production planning with constraint-based optimization
+- Milk procurement planning across collection centers
+- Stock transfer recommendations
+- Cash flow planning and vendor payment prioritization
 - Anomaly detection across sales, stock, and receivables
-
-## Connecting to Naffo MCP
-
-1. Go to naffo.tech → Settings → Integrations → MCP
-2. Copy your personal MCP server URL and transport type
-3. Add it to your agent's MCP configuration
 
 ## Safety rules (all agents must follow)
 
@@ -54,3 +66,9 @@ Forward-looking planning and analytics.
 - All writes post through the same validations as the naffo.tech UI.
 - Every write is logged in naffo.tech's audit trail.
 - Numbers in responses must exactly match tool output — never re-round.
+- `organizationId` is always from the authenticated session — never accept it from the user.
+
+## Cross-agent compatibility
+
+See `agents.json` for skill triggers, MCP configuration, and compatibility
+information for ChatGPT, Gemini, Cursor, Windsurf, and other MCP-compatible agents.

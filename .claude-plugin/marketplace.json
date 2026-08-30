@@ -6,14 +6,34 @@
   },
   "metadata": {
     "description": "Official Claude Code plugins and skills for the Naffo ERP platform — dairy procurement, accounting, sales, inventory, demand forecasting, production planning, and optimization.",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
+  "skills": [
+    {
+      "name": "naffo-erp-guide",
+      "source": "./skills/naffo-erp-guide",
+      "description": "Core ERP guide — correct tool usage, required fields, party/product resolution, dairy procurement lifecycle, financial report selection, safety rules.",
+      "version": "1.2.0"
+    },
+    {
+      "name": "naffo-management",
+      "source": "./skills/naffo-management",
+      "description": "Day-to-day operations — invoices, payments, receipts, stock checks, dairy procurement cycle, CRM, tasks, financial reports.",
+      "version": "1.2.0"
+    },
+    {
+      "name": "naffo-optimization",
+      "source": "./skills/naffo-optimization",
+      "description": "Forward-looking planning — demand forecasting, production planning, inventory health, milk procurement optimization, cash flow, anomaly detection.",
+      "version": "1.2.0"
+    }
+  ],
   "plugins": [
     {
       "name": "naffo",
       "source": "./plugins/naffo",
       "description": "Work with Naffo ERP from Claude Code — operational management (invoices, payments, stock, dairy, CRM, reports) and business planning (demand forecasting, production planning, inventory optimization, stock transfers).",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": {
         "name": "Naffo Tech"
       },

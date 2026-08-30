@@ -16,28 +16,40 @@ This repository contains official Claude skills and plugins for the
 npx skills add naffotech/naffo-marketplace
 ```
 
+## Connect your MCP server
+
+Get your personal MCP URL from **naffo.tech → Settings → Integrations → MCP**.
+
+```bash
+claude mcp add naffo --transport http <your-mcp-url>
+```
+
+Verify:
+```
+Who am I in Naffo?
+```
+
 ## Skills included
 
 | Skill | What it does |
 |---|---|
-| `naffo-erp-guide` | Core ERP rules — invoices, payments, GST, dairy procurement, reports |
-| `naffo-management` | Real-time operations — record transactions, check stock, CRM, tasks |
-| `naffo-optimization` | Forward-looking — demand forecasting, production planning, anomaly detection |
+| `naffo-erp-guide` | Core ERP rules — correct tool usage, required fields, party/product resolution, dairy lifecycle, report selection, safety rules |
+| `naffo-management` | Real-time operations — invoices, payments, stock, dairy procurement, CRM, tasks, financial reports |
+| `naffo-optimization` | Forward-looking analytics — demand forecasting, production planning, inventory health, anomaly detection |
 
 ## Skill locations
 
 - Top-level (auto-detected by most CLIs): `skills/`
-- Plugin-bundled: `plugins/naffo/skills/`
+- Plugin-bundled (identical copies): `plugins/naffo/skills/`
 
-## MCP connection
+## Slash commands (Claude Code plugin only)
 
-Get your personal MCP URL from naffo.tech:
-**Settings → Integrations → MCP**
-
-Then connect:
-```bash
-claude mcp add naffo --transport <type> <your-mcp-url>
-```
+| Command | What it does |
+|---|---|
+| `/naffo-setup` | Quick-start connection guide |
+| `/naffo-forecast` | Demand forecast for a product |
+| `/naffo-analyze` | Full inventory health analysis |
+| `/naffo-plan` | Production plan from demand + constraints |
 
 ## Safety
 

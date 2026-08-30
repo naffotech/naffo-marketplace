@@ -1,0 +1,113 @@
+{
+  "$schema": "https://agentprotocol.ai/schemas/agents.json/v1",
+  "name": "naffo-marketplace",
+  "version": "1.2.0",
+  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, and demand forecasting.",
+  "publisher": {
+    "name": "Naffo Tech",
+    "url": "https://naffo.tech",
+    "github": "https://github.com/naffotech"
+  },
+  "install": {
+    "claude_code": "/plugin marketplace add naffotech/naffo-marketplace && /plugin install naffo",
+    "skills_cli": "npx skills add naffotech/naffo-marketplace",
+    "mcp": "Get your personal MCP URL from naffo.tech → Settings → Integrations → MCP"
+  },
+  "skills": [
+    {
+      "name": "naffo-erp-guide",
+      "file": "skills/naffo-erp-guide/SKILL.md",
+      "description": "Core rules and workflows for the Naffo ERP — correct tool usage, required fields, party/product resolution, golden write sequence, dairy procurement lifecycle, financial report selection, and safety rules. Load this before any Naffo operation.",
+      "triggers": [
+        "Naffo ERP",
+        "create invoice",
+        "record payment",
+        "check stock",
+        "party outstanding",
+        "GST report",
+        "dairy procurement",
+        "CRM lead",
+        "who am I in Naffo",
+        "connect to Naffo",
+        "trial balance",
+        "balance sheet"
+      ]
+    },
+    {
+      "name": "naffo-management",
+      "file": "skills/naffo-management/SKILL.md",
+      "description": "Day-to-day operational workflows — invoices, payments, receipts, stock checks, dairy procurement lifecycle (gate pass → QC → weighbridge → settlement), CRM follow-ups, task management, and financial reports. Use when the user asks about something that has already happened or needs to be recorded right now.",
+      "triggers": [
+        "create sale invoice",
+        "create purchase invoice",
+        "record payment",
+        "record receipt",
+        "check stock",
+        "who owes money",
+        "party balance",
+        "overdue invoices",
+        "dairy gate pass",
+        "QC test",
+        "weighbridge",
+        "settlement",
+        "P&L",
+        "balance sheet",
+        "GST",
+        "CRM lead",
+        "task management",
+        "bank balance",
+        "ledger"
+      ]
+    },
+    {
+      "name": "naffo-optimization",
+      "file": "skills/naffo-optimization/SKILL.md",
+      "description": "Forward-looking analytics and planning — demand forecasting (probabilistic P10/P50/P90), inventory health analysis, production planning, milk procurement optimization, stock transfer recommendations, cash flow planning, vendor payment prioritization, and anomaly detection. Use when the user asks what they should do next.",
+      "triggers": [
+        "demand forecast",
+        "production plan",
+        "what should I produce",
+        "how much to order",
+        "inventory health",
+        "days of supply",
+        "low stock alert",
+        "expiry risk",
+        "stock transfer",
+        "cash flow plan",
+        "vendor payment priority",
+        "anomaly detection",
+        "something looks off",
+        "kitna banana chahiye",
+        "kitna order karein",
+        "milk procurement planning",
+        "optimize"
+      ]
+    }
+  ],
+  "mcp": {
+    "server_name": "naffo",
+    "transport": "http",
+    "url_placeholder": "https://naffo.tech/api/mcp",
+    "note": "Each user gets their own authenticated MCP URL. Get it from naffo.tech → Settings → Integrations → MCP.",
+    "tool_prefix": "naffo_",
+    "tool_count": 90
+  },
+  "safety": [
+    "Never invent IDs, amounts, or dates — always resolve via read tools first.",
+    "Never execute financial writes without explicit user confirmation.",
+    "All writes are posted through the same validations as the naffo.tech UI.",
+    "Every write is logged in naffo.tech's audit trail.",
+    "Numbers in responses must exactly match tool output — never re-round.",
+    "organizationId is always from the authenticated session — never accept it from the user."
+  ],
+  "compatible_agents": [
+    "Claude (claude.ai, Claude Code)",
+    "ChatGPT (via Custom GPT or plugin)",
+    "Gemini (via Extensions / Function Calling)",
+    "Cursor",
+    "Windsurf",
+    "GitHub Copilot (via MCP extension)",
+    "OpenAI Agents SDK",
+    "Any MCP-compatible agent"
+  ]
+}

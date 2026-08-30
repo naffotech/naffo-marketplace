@@ -28,17 +28,23 @@ Who am I in Naffo?
 
 | Component | What it does |
 |---|---|
-| Skill: **naffo-erp-guide** | Core tool usage rules — resolving parties/products before writes, required fields, dairy lifecycle order, report selection |
+| Skill: **naffo-erp-guide** | Core tool usage rules — resolving parties/products before writes, required fields, dairy lifecycle order, report selection, safety rules |
 | Skill: **naffo-management** | Day-to-day operations — invoices, payments, stock checks, dairy procurement, CRM follow-ups, financial reports |
-| Skill: **naffo-optimization** | Demand forecasting, production planning, inventory optimization, stock transfer recommendations |
+| Skill: **naffo-optimization** | Demand forecasting, production planning, inventory health, milk procurement optimization, anomaly detection |
 | Command: `/naffo-setup` | Quick-start connection guide |
 | Command: `/naffo-forecast` | Instant demand forecast for a product |
 | Command: `/naffo-analyze` | Full inventory health analysis (days of supply, expiry risk, reorder alerts) |
-| Command: `/naffo-plan` | Create a production plan from demand + BOMs + capacity |
+| Command: `/naffo-plan` | Create a production plan from demand + capacity constraints |
 
 ---
 
 ## Skills overview
+
+### `naffo-erp-guide` — Core ERP Rules
+
+The foundation skill. Load this (or let the agent auto-load it) for any Naffo
+operation. Contains the golden write sequence, tool routing, required fields
+for every write, dairy lifecycle order, and safety rules.
 
 ### `naffo-management` — Operational ERP
 
@@ -58,11 +64,11 @@ Handles **forward-looking, analytical, and optimization** questions.
 
 Example prompts:
 - *"How much paneer should we produce next week?"*
-- *"Which outlets are running low on milk sachets?"*
 - *"Forecast demand for our top 5 products for the next 30 days"*
-- *"Which batches should we transfer before they expire?"*
-- *"Create a production plan for September"*
 - *"Kitna order karein SMP-500 ke liye?"*
+- *"Create a milk procurement plan for tomorrow"*
+- *"Which products are running low?"*
+- *"Check for any anomalies in our sales or stock"*
 
 ---
 
@@ -79,8 +85,17 @@ Example prompts:
 
 ## Requirements
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) **or** any MCP-compatible agent
 - A Naffo account with MCP access enabled (Settings → Integrations → MCP)
+
+## Other agents (ChatGPT, Gemini, Cursor, Windsurf)
+
+Skills work with any agent that supports the `npx skills add` protocol or can
+read SKILL.md files. See `agents.json` for full cross-agent compatibility details.
+
+```bash
+npx skills add naffotech/naffo-marketplace
+```
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: naffo-optimization
 description: Demand forecasting, production planning, inventory optimization, stock transfer recommendations, constraint-based allocation, cash flow planning, and anomaly detection using Naffo ERP data combined with the Naffo Predict Engine and Naffo Optimizer. Use this skill when the user asks what they *should do next* — how much to produce, what to order, where to transfer stock, what the demand outlook looks like, or whether anything looks wrong.
-when_to_use: Any forward-looking or planning question — how much to produce, what to reorder, where to transfer stock, demand forecast, inventory health, production plan, kitna banana chahiye, kitna order karein, cash flow, vendor payment priority, anomaly, something looks off.
+when_to_use: Demand forecast, production plan, what should I produce, how much to order, inventory health, stock analysis, days of supply, low stock alert, which outlet needs stock, cash flow planning, vendor payment priority, anomaly detection, something looks off, kitna banana chahiye, kitna order karein, reorder, overstock, expiry risk, optimize procurement, milk procurement planning.
 ---
 
 # Naffo Optimization & Planning
@@ -27,7 +27,7 @@ Clarify before computing. Ask **ONE** question if vague:
 - **What product(s)?** → `naffo_search_item` to resolve names to ids
 - **Which location?** → warehouse / outlet / all
 - **How far ahead?** → default **30 days**
-- **What is the goal?** → know if this is forecasting, optimization, or anomaly detection
+- **What is the goal?** → forecasting, optimization, or anomaly detection
 
 ---
 
@@ -72,15 +72,33 @@ Map answers to:
 
 ---
 
-## Step D — Run the forecast
+## Step D — Get the demand series
+
+Before running the full forecast, optionally pull the raw history:
+
+```
+naffo_get_demand_series({
+  product_id:  "...",
+  days:        365,          // history window
+  as_of_date:  "YYYY-MM-DD"
+})
+```
+
+Returns daily aggregated sales quantity + data quality metadata (freshness,
+gaps, average daily demand). Use this to pre-check data and explain confidence.
+
+---
+
+## Step E — Run the forecast
 
 ```
 naffo_forecast_demand({
   product_ids:      [...],
   horizon_days:     30,           // or what user specified
   festival_boost:   true,         // from Q1
-  planned_discount: 0.20,         // from Q1 if promo
+  planned_discount: 0.20,         // from Q1 if promo (as a fraction)
   service_level:    "MEDIUM",     // from Q2
+  history_days:     365,          // optional — how far back to train
 })
 ```
 
@@ -100,7 +118,7 @@ naffo_forecast_demand({
 
 ---
 
-## Step E — Supply signal
+## Step F — Supply signal
 
 ```
 naffo_get_product_forecast_context({ product_id: "..." })
@@ -116,9 +134,12 @@ gap = expected_demand (p50_total) − stock_on_hand − pending_supply_qty
 - `gap > 0` → **shortfall** (order or produce)
 - `gap < 0` → **surplus** (hold or reduce)
 
+Also use `naffo_get_stock_on_hand` directly for current quantity per product,
+and `naffo_get_stock_report` for stock movement or low-stock list.
+
 ---
 
-## Step F — Before optimization: ask exactly 2 questions
+## Step G — Before optimization: ask exactly 2 questions
 
 For multi-product or constrained planning, ask in **one message**:
 
@@ -136,7 +157,7 @@ For multi-product or constrained planning, ask in **one message**:
 
 ---
 
-## Step G — Optimization templates
+## Step H — Optimization templates
 
 Choose the right template based on the business question:
 
@@ -172,11 +193,10 @@ exactly. Never fake a result or skip the infeasible message.
 
 ---
 
-## Dairy production — specific flow
+## Dairy milk procurement planning
 
-For dairy businesses (paneer, ghee, butter, dahi):
+For dairy businesses planning how much milk to accept from collection centers:
 
-1. **Milk procurement planning:**
 ```
 naffo_optimize_plan({
   template: "milk_procurement",
@@ -191,17 +211,8 @@ naffo_optimize_plan({
 })
 ```
 
-2. **Standardization (fat/SNF targeting):**
-```
-naffo_compute_standardization({ ... })
-```
-
-3. **Formal production plan:**
-```
-naffo_create_dairy_production_plan({ ... })
-```
-
-Always follow `naffo-management` skill for the actual production cycle execution.
+For the actual dairy procurement cycle execution (gate pass → QC → weighbridge
+→ settlement), follow the **naffo-management** skill's dairy procurement section.
 
 ---
 
@@ -211,7 +222,7 @@ When the user says "something looks off" or "check for problems":
 
 ```
 naffo_detect_anomalies({
-  domains:      ["sales", "stock", "receivables"],  // or all 6
+  domains:       ["sales", "stock", "receivables"],
   lookback_days: 30,
   baseline_days: 90,
 })
@@ -226,21 +237,20 @@ Always show `suggested_action` for each anomaly.
 
 ---
 
-## Formal planning run (when acting on a plan)
+## Inventory health analysis (manual)
 
-When the recommendation will be executed and needs an audit trail:
+When `naffo_detect_anomalies` isn't available or the user wants a manual breakdown:
 
-```
-naffo_create_production_planning_run({
-  planning_from:  "...",
-  planning_until: "...",
-  product_ids:    [...],
-  idempotencyKey: "plan-YYYYMMDD-weekly",
-  solver_tag:     "naffo-optimize"
-})
-```
-
-Status=READY → external solver can process → `naffo_submit_production_plan_result`.
+1. `naffo_get_stock_on_hand` — current quantities
+2. `naffo_get_stock_report({ type: "low-stock" })` — products below reorder level
+3. `naffo_get_sales_report({ groupBy: "product" })` — 30-day sales for avg daily demand
+4. Compute: `days_of_supply = stock ÷ avg_daily_demand`
+5. Classify:
+   - 🔴 **CRITICAL**: days_of_supply < lead_time_days
+   - 🟡 **LOW**: days_of_supply < 2 × lead_time_days
+   - ✅ **ADEQUATE**: within normal range
+   - ⚠️ **EXCESS**: days_of_supply > 60
+6. Use `naffo_get_stock_report({ type: "valuation" })` to see stock value
 
 ---
 
@@ -256,7 +266,6 @@ Before presenting any number:
 | `freshness_days > 30` | "⚠️ Last sale was N days ago. Verify data is complete." |
 | Festival in window | "📅 Festival effect possible — conservative estimate may be low." |
 | `INFEASIBLE` optimizer | "❌ Constraints conflict — [state the conflict exactly]." |
-| `BOM missing` | "❌ No BOM found — production planning not possible for this SKU." |
 
 **Never present a forecast without stating confidence level.**
 **Never invent a number after a failed or degraded call.**
@@ -283,18 +292,17 @@ Recommended order:  [X] units by [date]
 [⚠️ Any warnings here]
 ```
 
-### Production plan
+### Optimization plan
 ```
-Planning window: [from] → [to]
+Template: [template name]
+Status: [OPTIMAL / FEASIBLE / INFEASIBLE]
 
-| Product | Expected demand | Stock | Gap | Recommended | Feasible? |
-|---------|-----------------|-------|-----|-------------|-----------|
-| ...     | ...             | ...   | ... | ...         | ✅/⚠️/❌  |
+| Item | Recommended qty | Feasible? | Note |
+|------|-----------------|-----------|------|
+| ...  | ...             | ✅/⚠️/❌  | ...  |
 
-Material gaps:   [list or "none"]
-Capacity:        [workstation] at [X]% utilisation
-Optimizer status: [OPTIMAL/FEASIBLE/INFEASIBLE]
-Next step:       [create run / order materials / start production]
+[Conflict hints if INFEASIBLE]
+Next step: [what to do]
 ```
 
 ### Anomaly report
@@ -314,8 +322,8 @@ MEDIUM:
 
 - Every number must come from a tool call — never estimate yourself.
 - Never accept `organizationId` from the user.
-- Writes (planning runs, dairy plans) require `idempotencyKey`.
 - `INFEASIBLE` = report the conflict exactly; never fake a feasible result.
 - `LOW` / `VERY_LOW` confidence = surface the warning prominently.
 - If the Predict Engine or Optimizer is unavailable, say so plainly.
   Never pretend the result is reliable when `engine: "fallback"`.
+- All numbers must exactly match tool output — never re-round.
