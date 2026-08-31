@@ -50,10 +50,19 @@ Real-time operational workflows.
 - Financial reports (trial balance, balance sheet, P&L day book, GST)
 
 ### naffo-optimization (`skills/naffo-optimization/SKILL.md`)
-Forward-looking planning and analytics.
-- Demand forecasting with P10/P50/P90 confidence tiers
+Forward-looking planning and analytics — now includes the complete forecast-to-order chain:
+- Demand character analysis: rolling stats, lags, YoY growth, India calendar flags, demand pattern (STABLE/TREND/FESTIVAL_DRIVEN/VOLATILE) — `naffo_get_demand_features`
+- Trend direction across monthly periods (GROWTH/FLAT/DECLINE) — `naffo_get_demand_trend`
+- Structural demand drop guard — detects lost customers/discontinued lines before over-ordering — `naffo_detect_changepoint`
+- Probabilistic forecast with P10/P50/P90 confidence tiers — `naffo_forecast_demand`
+- AR-1 corrected uncertainty bands (fixes naive range overstatement by 40–80%) — `naffo_aggregate_forecast_range`
+- Cost-optimal order quantity via newsvendor model (critical ratio, Cu/Co) — `naffo_newsvendor_order_qty`
+- Business guardrails: MOQ, stockout urgency, approval gates, do-not-order check — `naffo_harden_order_decision`
+- Three-scenario comparison (LOW/EXPECTED/HIGH) for owner decision — `naffo_forecast_scenarios`
 - Inventory health (days of supply, expiry risk, low-stock alerts)
-- Production planning with constraint-based optimization
+- Production planning with constraint-based optimization (8 templates via `naffo_optimize_plan`)
+- Shift scheduling and delivery routing via CP-SAT — `naffo_optimize_custom`
+- Customer churn risk, SKU wastage risk, supplier delivery risk — `naffo_get_business_intel`
 - Milk procurement planning across collection centers
 - Stock transfer recommendations
 - Cash flow planning and vendor payment prioritization

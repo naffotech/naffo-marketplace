@@ -1,8 +1,8 @@
 {
   "$schema": "https://agentprotocol.ai/schemas/agents.json/v1",
   "name": "naffo-marketplace",
-  "version": "1.4.0",
-  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, and business analytics.",
+  "version": "1.5.0",
+  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, inventory optimization, business intelligence, and complete forecast-to-order decision chain.",
   "publisher": {
     "name": "Naffo Tech",
     "url": "https://naffo.tech",
@@ -17,7 +17,7 @@
     {
       "name": "naffo-erp-guide",
       "file": "skills/naffo-erp-guide/SKILL.md",
-      "description": "Core rules and workflows for the Naffo ERP — correct tool usage, required fields, party/product resolution, golden write sequence, dairy procurement lifecycle, financial report selection, and safety rules. Load this before any Naffo operation.",
+      "description": "Core rules and workflows for the Naffo ERP — correct tool usage, required fields, party/product resolution, golden write sequence, dairy procurement lifecycle, financial report selection, forecasting quick-reference, and safety rules. Load this before any Naffo operation.",
       "triggers": [
         "Naffo ERP",
         "create invoice",
@@ -62,7 +62,7 @@
     {
       "name": "naffo-optimization",
       "file": "skills/naffo-optimization/SKILL.md",
-      "description": "Forward-looking analytics and planning — demand forecasting (probabilistic P10/P50/P90), inventory health analysis, production planning, milk procurement optimization, stock transfer recommendations, cash flow planning, vendor payment prioritization, and anomaly detection. Use when the user asks what they should do next.",
+      "description": "Forward-looking analytics and planning — complete forecast-to-order chain (readiness → features → trend → changepoint → forecast → uncertainty bands → newsvendor → guardrails → 3 scenarios), inventory health, production planning, milk procurement optimization, stock transfer recommendations, cash flow planning, vendor payment prioritization, anomaly detection, customer churn risk, SKU wastage risk, supplier delivery risk, shift scheduling, and delivery routing. Use when the user asks what they should do next.",
       "triggers": [
         "demand forecast",
         "production plan",
@@ -80,7 +80,24 @@
         "kitna banana chahiye",
         "kitna order karein",
         "milk procurement planning",
-        "optimize"
+        "optimize",
+        "customer churn",
+        "wastage risk",
+        "supplier risk",
+        "business intel",
+        "changepoint",
+        "demand trend",
+        "demand features",
+        "newsvendor",
+        "order recommendation",
+        "forecast scenarios",
+        "safety stock",
+        "MOQ",
+        "approval gate",
+        "shift scheduling",
+        "delivery routing",
+        "uncertainty band",
+        "confidence tier"
       ]
     },
     {
@@ -184,7 +201,7 @@
     "url_placeholder": "https://naffo.tech/api/mcp",
     "note": "Each user gets their own authenticated MCP URL. Get it from naffo.tech → Settings → Integrations → MCP.",
     "tool_prefix": "naffo_",
-    "tool_count": 90
+    "tool_count": 96
   },
   "safety": [
     "Never invent IDs, amounts, or dates — always resolve via read tools first.",

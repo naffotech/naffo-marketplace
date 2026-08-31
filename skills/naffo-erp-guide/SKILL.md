@@ -289,3 +289,52 @@ naffo_create_project
 - Financial writes are **not auto-reversible** — confirm with user before calling.
 - `organizationId` always from the authenticated session — never from user input.
 - Numbers in responses must exactly match tool output — never re-round.
+
+---
+
+## Forecasting & Optimization quick-reference
+
+For full detail see `naffo-optimization` skill.
+
+### Quick tool map
+
+| Goal | Tool | Lambda? |
+|---|---|---|
+| Data quality check | `naffo_check_forecast_readiness` | No |
+| Demand character (rolling, lags, YoY, seasons) | `naffo_get_demand_features` | No |
+| Trend direction (GROWTH/FLAT/DECLINE) | `naffo_get_demand_trend` | No |
+| Structural demand drop guard | `naffo_detect_changepoint` | No |
+| Probabilistic forecast (p10/p50/p90) | `naffo_forecast_demand` | **Yes** |
+| Corrected horizon uncertainty bands | `naffo_aggregate_forecast_range` | No |
+| Cost-optimal order quantity (newsvendor) | `naffo_newsvendor_order_qty` | No |
+| Business guardrails (MOQ / stockout / approval) | `naffo_harden_order_decision` | No |
+| Three-scenario comparison (LOW/EXPECTED/HIGH) | `naffo_forecast_scenarios` | No |
+| Multi-SKU budget allocation | `naffo_optimize_plan` (order_allocation) | **Yes** |
+| Shift scheduling / delivery routing | `naffo_optimize_custom` | **Yes** |
+| Customer churn + SKU wastage + supplier risk | `naffo_get_business_intel` | No |
+| Statistical anomaly detection | `naffo_detect_anomalies` | No |
+
+### Correct chain for a single-product order recommendation
+
+```
+naffo_check_forecast_readiness → naffo_get_demand_features
+→ naffo_get_demand_trend → naffo_detect_changepoint (if DECLINE)
+→ naffo_forecast_demand → naffo_aggregate_forecast_range
+→ naffo_get_stock_on_hand → naffo_newsvendor_order_qty
+→ naffo_harden_order_decision   ← FINAL recommendation
+→ naffo_forecast_scenarios       ← show all 3 options to owner
+```
+
+### Engine & confidence rules
+
+| engine | confidence_tier | What to say |
+|---|---|---|
+| `predict-v1` | HIGH/MEDIUM | Present numbers directly |
+| `predict-v1` | LOW | "⚠️ Verify before ordering." |
+| `fallback` + `predict_engine_unavailable` | LOW | "AI engine unavailable — statistical estimate only." |
+| `fallback` + `insufficient_history` | VERY_LOW | "Insufficient data — rough estimate only." |
+
+If `naffo_harden_order_decision` returns:
+- `urgency: URGENT` → 🚨 stockout risk — present immediately
+- `approval_required: true` → 🔒 route to manager before placing order
+- `decision_status: do_not_order_overstock` → 🚫 do not order
