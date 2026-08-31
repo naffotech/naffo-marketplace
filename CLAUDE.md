@@ -36,6 +36,12 @@ Who am I in Naffo?
 | `naffo-erp-guide` | Core ERP rules — correct tool usage, required fields, party/product resolution, dairy lifecycle, report selection, safety rules |
 | `naffo-management` | Real-time operations — invoices, payments, stock, dairy procurement, CRM, tasks, financial reports |
 | `naffo-optimization` | Forward-looking analytics — demand forecasting, production planning, inventory health, anomaly detection |
+| `month-end-close` | Month-end close checklist — reconcile, GST check, trial balance, anomaly scan |
+| `monthly-digest` | Monthly snapshot — sales vs last month, top customers, expenses, anomaly alerts |
+| `client-profitability` | Customer revenue ranking, slow-payer flags, concentration risk |
+| `revenue-concentration` | Customer concentration risk with HHI score |
+| `seasonal-patterns` | Monthly revenue seasonality — peak/trough index, cash planning |
+| `runway-calculator` | Cash runway — burn rate, months of operation, three scenarios |
 
 ## Skill locations
 

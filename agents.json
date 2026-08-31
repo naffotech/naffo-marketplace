@@ -1,8 +1,8 @@
 {
   "$schema": "https://agentprotocol.ai/schemas/agents.json/v1",
   "name": "naffo-marketplace",
-  "version": "1.2.0",
-  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, and demand forecasting.",
+  "version": "1.3.0",
+  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, and business analytics.",
   "publisher": {
     "name": "Naffo Tech",
     "url": "https://naffo.tech",
@@ -81,6 +81,100 @@
         "kitna order karein",
         "milk procurement planning",
         "optimize"
+      ]
+    },
+    {
+      "name": "month-end-close",
+      "file": "skills/analytics/month-end-close/SKILL.md",
+      "description": "Structured month-end close checklist using Naffo ERP — reconcile transactions, GST check, trial balance, anomaly scan, bank reconciliation.",
+      "triggers": [
+        "month-end close",
+        "close the books",
+        "monthly reconciliation",
+        "book closing",
+        "GST filing",
+        "reconcile accounts",
+        "accounting close",
+        "month end"
+      ]
+    },
+    {
+      "name": "monthly-digest",
+      "file": "skills/analytics/monthly-digest/SKILL.md",
+      "description": "Monthly financial snapshot — sales vs last month, top customers and products, expense breakdown, anomaly alerts, one recommended action.",
+      "triggers": [
+        "monthly digest",
+        "monthly summary",
+        "how did we do this month",
+        "business summary",
+        "monthly review",
+        "monthly report",
+        "financial snapshot",
+        "how is business going"
+      ]
+    },
+    {
+      "name": "client-profitability",
+      "file": "skills/analytics/client-profitability/SKILL.md",
+      "description": "Revenue, outstanding balances, and payment behavior per customer — ranks customers, flags slow payers and concentration risk.",
+      "triggers": [
+        "client profitability",
+        "customer profitability",
+        "best customers",
+        "most profitable customer",
+        "customer ranking",
+        "top customers",
+        "customer analysis",
+        "who pays on time"
+      ]
+    },
+    {
+      "name": "revenue-concentration",
+      "file": "skills/analytics/revenue-concentration/SKILL.md",
+      "description": "Customer concentration risk — revenue share per client, HHI score, and diversification recommendations.",
+      "triggers": [
+        "revenue concentration",
+        "customer concentration",
+        "business risk",
+        "dependency on one customer",
+        "top customer share",
+        "diversification",
+        "revenue risk",
+        "single customer dependency"
+      ]
+    },
+    {
+      "name": "seasonal-patterns",
+      "file": "skills/analytics/seasonal-patterns/SKILL.md",
+      "description": "Monthly revenue and expense seasonality — seasonal index, peak/trough months, cash planning for dairy and food businesses.",
+      "triggers": [
+        "seasonal patterns",
+        "seasonality",
+        "which month is best",
+        "peak month",
+        "slow season",
+        "monthly trends",
+        "seasonal revenue",
+        "festival season",
+        "Diwali sales",
+        "revenue cycle"
+      ]
+    },
+    {
+      "name": "runway-calculator",
+      "file": "skills/analytics/runway-calculator/SKILL.md",
+      "description": "Cash runway — months of operation at current burn rate, three scenarios (current / lean / growth), traffic-light status.",
+      "triggers": [
+        "runway",
+        "cash runway",
+        "how long can we survive",
+        "months of cash",
+        "burn rate",
+        "cash burn",
+        "how much cash is left",
+        "working capital",
+        "cash reserves",
+        "business survival"
       ]
     }
   ],

@@ -59,6 +59,15 @@ Forward-looking planning and analytics.
 - Cash flow planning and vendor payment prioritization
 - Anomaly detection across sales, stock, and receivables
 
+### Analytics skills (`skills/analytics/`)
+Business intelligence on top of Naffo ERP data (adapted from openaccountant/skills):
+- `month-end-close` — structured bookkeeping close checklist with GST + bank reconciliation
+- `monthly-digest` — quick monthly financial snapshot with anomaly alerts
+- `client-profitability` — revenue ranking, slow-payer flags, concentration risk
+- `revenue-concentration` — customer HHI score and diversification targets
+- `seasonal-patterns` — monthly revenue index, peak/trough detection (dairy/food focused)
+- `runway-calculator` — cash runway, burn rate, three-scenario analysis
+
 ## Safety rules (all agents must follow)
 
 - **Never invent IDs, amounts, or dates.** Always resolve first.
