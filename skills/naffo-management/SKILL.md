@@ -322,7 +322,8 @@ naffo_list_expense_categories   → type [EXPENSE/INCOME/ANY]
 ```
 naffo_list_crm_leads    → pipelineId, stageId, priority [LOW/MEDIUM/HIGH/URGENT], dueBefore
 naffo_create_lead       → pipeline + party details
-naffo_update_lead       → leadId  ← use this to change stage (no separate move-stage tool)
+naffo_update_lead       → leadId (edit fields)
+naffo_move_lead_stage   → leadId, stageId  ← dedicated stage transition tool
 naffo_add_crm_activity  → leadId, type [CALL/WHATSAPP/MEETING/EMAIL/DEMO/NOTE/SITE_VISIT], outcome
 naffo_list_calendar_events → from, to, types[], include_overdue
 
