@@ -1,7 +1,7 @@
 ---
 name: naffo-optimization
-description: Demand forecasting, production planning, inventory optimization, batch expiry risk, stock transfer recommendations, dairy production planning, constraint-based allocation, cash flow planning, anomaly detection, business intelligence signals, and complete forecast-to-order decision chain using Naffo ERP data. Use this skill when the user asks what they should do next — how much to produce, what to order, where to transfer stock, what the demand outlook looks like, or whether anything looks wrong.
-when_to_use: Demand forecast, production plan, what should I produce, how much to order, inventory health, days of supply, low stock alert, batch expiry, expiry risk, near-expiry, FEFO, stock transfer, which outlet needs stock, cash flow plan, vendor payment priority, anomaly detection, something looks off, kitna banana chahiye, kitna order karein, reorder, overstock, milk procurement planning, standardization, dairy recipe, production flow, batch cost, yield, planning run, business intel, customer churn, wastage risk, supplier risk, shift scheduling, delivery routing, forecast scenarios, order scenarios, changepoint, demand trend, demand features, uncertainty band, newsvendor, MOQ, safety stock, decision hardening, approval gate.
+description: Demand forecasting, production planning, inventory optimization, batch expiry risk, stock transfer recommendations, module-specific planning (dairy, manufacturing, etc.), constraint-based allocation, cash flow planning, anomaly detection, business intelligence signals, and complete forecast-to-order decision chain using Naffo ERP data. Use this skill when the user asks what they should do next — how much to produce, what to order, where to transfer stock, what the demand outlook looks like, or whether anything looks wrong.
+when_to_use: Demand forecast, production plan, what should I produce, how much to order, inventory health, days of supply, low stock alert, batch expiry, expiry risk, near-expiry, FEFO, stock transfer, which outlet needs stock, cash flow plan, vendor payment priority, anomaly detection, something looks off, reorder, overstock, production flow, batch cost, yield, planning run, business intel, customer churn, wastage risk, supplier risk, shift scheduling, delivery routing, forecast scenarios, order scenarios, changepoint, demand trend, demand features, uncertainty band, newsvendor, MOQ, safety stock, decision hardening, approval gate.
 ---
 
 # Naffo Optimization & Planning
@@ -163,7 +163,7 @@ naffo_list_outlet_stock_movements({ sinceDays: 7 })
   (D) Maximize production volume
 
 **Q2 — Hard constraints:**
-  (A) Budget cap: ₹___
+  (A) Budget cap: [amount in your currency]___
   (B) Machine / production hours: ___ hours
   (C) Storage / vehicle capacity: ___ units
   (D) No hard limit
@@ -174,7 +174,7 @@ naffo_list_outlet_stock_movements({ sinceDays: 7 })
 
 | Business question | Template |
 |---|---|
-| "₹X budget — what to buy, how much?" | `order_allocation` |
+| "Budget-constrained — what to buy, how much?" | `order_allocation` |
 | "What to produce this week given capacity?" | `production_plan` |
 | "Move stock between warehouses / outlets?" | `stock_transfer` |
 | "How much milk to accept from each center?" | `milk_procurement` |
@@ -186,7 +186,7 @@ naffo_list_outlet_stock_movements({ sinceDays: 7 })
 naffo_optimize_plan({
   template: "<chosen template>",
   data:     { ...template payload... },
-  budget:   500000,
+  budget:   <your budget amount>,
 })
 ```
 
@@ -204,6 +204,8 @@ Optimizer status:
 ---
 
 ## Dairy milk procurement planning
+
+> **Dairy module only** — available when the org has dairy procurement enabled.
 
 ```
 naffo_optimize_plan({
@@ -228,6 +230,8 @@ naffo_get_dairy_procurement_dashboard → daily milk KPIs
 ---
 
 ## Dairy production planning
+
+> **Dairy module only** — available when the org has dairy production enabled.
 
 **Step-by-step dairy product planning:**
 
@@ -268,7 +272,7 @@ For BOMs with stages, constraints, and live cost tracking:
 ```
 # Discover
 naffo_production_flows_overview
-naffo_production_flow_search({ query, status: "ACTIVE", industry: "DAIRY" })
+naffo_production_flow_search({ query, status: "ACTIVE", industry: "<your industry>" })
 naffo_production_flow_get        → flowId (stages, inputs, outputs, formulas)
 
 # Pre-run checks
@@ -378,8 +382,8 @@ Recommended:        [X] units by [date]
 ```
 Product | Stock | Avg/day | DoS | Status     | Action
 --------|-------|---------|-----|------------|-------
-[name]  | X kg  | Y kg    | Z d | 🔴 CRITICAL | Order now
-[name]  | X kg  | Y kg    | Z d | ☠️ EXPIRY   | Transfer to [outlet]
+[name]  | X [unit] | Y [unit] | Z d | 🔴 CRITICAL | Order now
+[name]  | X [unit] | Y [unit] | Z d | ☠️ EXPIRY   | Transfer to [outlet]
 ```
 
 ### Optimizer plan
@@ -401,8 +405,8 @@ Next step: [what to do]
 |---|---|
 | `confidence_tier: VERY_LOW` | "⚠️ Estimate only — engine unavailable. Do not use for large orders." |
 | `confidence_tier: LOW` | "⚠️ Statistical estimate — verify before ordering." |
-| `data_points < 15` | "⚠️ Thin data — low confidence." |
-| `freshness_days > 30` | "⚠️ Last sale was N days ago. Verify data is complete." |
+| `data_points < 15` | "⚠️ Thin data — low confidence." *(threshold set by `naffo_check_forecast_readiness`)* |
+| `freshness_days > 30` | "⚠️ Last sale was N days ago. Verify data is complete." *(threshold set by tool)* |
 | Festival in window | "📅 Festival effect possible — conservative estimate may be low." |
 | `INFEASIBLE` optimizer | "❌ Constraints conflict — [state exactly]." |
 | `readiness.ready = false` | "❌ [list blocking errors]. Cannot proceed until resolved." |
@@ -442,10 +446,11 @@ naffo_get_demand_features({ product_id: pid })
 ```
 Returns: `demand_pattern` (STABLE/TREND/FESTIVAL_DRIVEN/VOLATILE),
 `confidence_boost` (+0.10/+0.05/0/−0.05), `yoy_growth_pct`, `momentum_7d`,
-`is_wedding_season`, `is_harvest_season`, lag values (1d/7d/30d/365d).
+`is_wedding_season` (India/South Asia: wedding season demand indicator),
+`is_harvest_season` (agricultural orgs: harvest season indicator), lag values (1d/7d/30d/365d).
 
 - **VOLATILE** → lower confidence; suggest collecting more data before large order.
-- **FESTIVAL_DRIVEN** → flag upcoming festival window; check `is_wedding_season`.
+- **FESTIVAL_DRIVEN** → flag upcoming festival/peak-event window; check `is_wedding_season` if applicable (India/South Asia).
 - **TREND** → model captures direction; reliable for GROWTH patterns.
 - **STABLE** → most reliable; standard confidence.
 
@@ -517,7 +522,7 @@ naffo_harden_order_decision({
     current_stock,
     unit_price:      sell_price,
     moq:             product.minOrderQuantity ?? 1,
-    lead_time_days:  product.leadTimeDays ?? 7,
+    lead_time_days:  product.leadTimeDays ?? 7,  // 7 days is the default fallback — use product master value when available
     data_age_days:   result.data_freshness_days,
     horizon_days:    30,
 })
@@ -630,7 +635,7 @@ Both templates return `OPTIMAL / FEASIBLE / INFEASIBLE / ERROR` — same rules a
 | `demand_pattern: VOLATILE` | "High demand variance — low-confidence forecast." |
 | `demand_pattern: FESTIVAL_DRIVEN` | "Festival-driven demand — check the festival calendar." |
 | `urgency: URGENT` | "🚨 Stockout within [N] days — order immediately." |
-| `approval_required: true` | "🔒 Order value ₹[N] — needs manager approval before placing." |
+| `approval_required: true` | "🔒 Order value exceeds threshold — needs manager approval before placing." |
 | `INFEASIBLE` | "❌ Constraints conflict — [state conflict_hints exactly]." |
-| `data_points < 15` | "⚠️ Thin data — LOW confidence." |
-| `freshness_days > 30` | "⚠️ Last sale [N] days ago. Verify before ordering." |
+| `data_points < 15` | "⚠️ Thin data — LOW confidence." *(tool-defined threshold)* |
+| `freshness_days > 30` | "⚠️ Last sale [N] days ago. Verify before ordering." *(tool-defined threshold)* |

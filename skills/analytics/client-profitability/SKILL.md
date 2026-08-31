@@ -35,7 +35,8 @@ High outstanding / revenue ratio = payment risk.
 naffo_list_overdue_invoices()
 ```
 
-Flag customers with invoices overdue > 30 days.
+Flag customers with invoices overdue beyond your standard credit terms
+(default 30 days — adjust to your actual payment terms).
 
 ## Step 3b — Tally-accurate aging (if Tally is synced)
 
@@ -48,30 +49,34 @@ Use these for more accurate per-bill tracking when Tally sync is active.
 
 ## Output format
 
+Use the org's currency symbol from `naffo_get_my_profile`. Replace `[curr]` with it below.
+
 ```
 CLIENT PROFITABILITY — [Period]
 ══════════════════════════════════════════════════════════════
-Rank  Customer        Revenue    Outstanding  Overdue  Risk
-──────────────────────────────────────────────────────────────
-1     [Name]          ₹XX,XXX    ₹X,XXX       —        ✅ Low
-2     [Name]          ₹XX,XXX    ₹XX,XXX      30d      ⚠️ Med
-3     [Name]          ₹XX,XXX    ₹XXX          —        ✅ Low
-──────────────────────────────────────────────────────────────
-TOTAL                 ₹X,XX,XXX
+Rank  Customer        Revenue         Outstanding    Overdue  Risk
+──────────────────────────────────────────────────────────────────
+1     [Name]          [curr]XX,XXX    [curr]X,XXX    —        ✅ Low
+2     [Name]          [curr]XX,XXX    [curr]XX,XXX   30d      ⚠️ Med
+3     [Name]          [curr]XX,XXX    [curr]XXX       —        ✅ Low
+──────────────────────────────────────────────────────────────────
+TOTAL                 [curr]X,XX,XXX
 
 Top 3 customers = XX% of revenue
-Risk flags: [N] customers with overdue > 30d
+Risk flags: [N] customers with overdue > [your credit terms]d
 ══════════════════════════════════════════════════════════════
 ```
 
 ## Risk scoring
 
+These thresholds are starting points — calibrate to your industry and credit policy:
+
 | Condition | Flag |
 |---|---|
-| Outstanding > 30% of 12-month revenue | ⚠️ High balance risk |
-| Any invoice overdue > 60 days | 🔴 Collection risk |
-| Customer = >25% of total revenue | ⚠️ Concentration risk |
-| Customer = >50% of total revenue | 🔴 Critical dependency |
+| Outstanding > 30% of 12-month revenue | ⚠️ High balance risk *(adjust % to your norms)* |
+| Any invoice overdue > 60 days | 🔴 Collection risk *(adjust to your credit terms)* |
+| Customer = >25% of total revenue | ⚠️ Concentration risk *(adjust to your risk appetite)* |
+| Customer = >50% of total revenue | 🔴 Critical dependency *(adjust to your risk appetite)* |
 
 ## Recommended actions
 

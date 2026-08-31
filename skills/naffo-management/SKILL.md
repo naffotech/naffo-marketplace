@@ -1,7 +1,7 @@
 ---
 name: naffo-management
-description: Day-to-day operations for the Naffo ERP — invoices, parties, stock, batches, warehouse transfers, payments, receipts, dairy procurement lifecycle, manufacturing status, CRM follow-ups, financial reports, and task management. Use this skill when the user asks about something that has already happened or needs to be recorded right now.
-when_to_use: Create invoice, record payment, check stock, who owes money, party balance, outstanding, receivables, record receipt, dairy procurement, gate pass, QC, weighbridge, settlement, sales report, purchase invoice, bank balance, GST, P&L, balance sheet, trial balance, CRM lead, follow up, task, overdue invoices, ledger, day book, expenses, purchase order, GRN, batch expiry, stock transfer, warehouse, delivery challan, quotation, manufacturing batch.
+description: Day-to-day operations for the Naffo ERP — invoices, parties, stock, batches, warehouse transfers, payments, receipts, module-specific workflows (dairy procurement, manufacturing, etc.), CRM follow-ups, financial reports, and task management. Use this skill when the user asks about something that has already happened or needs to be recorded right now.
+when_to_use: Create invoice, record payment, check stock, who owes money, party balance, outstanding, receivables, record receipt, dairy procurement, gate pass, QC, weighbridge, settlement, sales report, purchase invoice, bank balance, tax report, P&L, balance sheet, trial balance, CRM lead, follow up, task, overdue invoices, ledger, day book, expenses, purchase order, GRN, batch expiry, stock transfer, warehouse, delivery challan, quotation, manufacturing batch.
 ---
 
 # Naffo Management
@@ -29,7 +29,8 @@ naffo_describe_tools({ names: ["naffo_create_sale_invoice"] })
 
 ```
 naffo_whoami              → username, org name, role
-naffo_get_my_profile      → GSTIN, PAN, TAN, currency, FY start
+naffo_get_my_profile      → currency, FY start, org address,
+                            tax IDs (fields vary by country — e.g. GSTIN/PAN/TAN for India)
 naffo_get_mis_dashboard   → today's sales, receivables, payables, bank balances
 ```
 
@@ -39,7 +40,7 @@ naffo_get_mis_dashboard   → today's sales, receivables, payables, bank balance
 
 | Goal | Tool | Note |
 |---|---|---|
-| Search by name/phone/GSTIN | `naffo_search_party` | `type`: CUSTOMER/VENDOR/BOTH/EMPLOYEE/TRANSPORTER |
+| Search by name/phone/tax ID | `naffo_search_party` | `type`: CUSTOMER/VENDOR/BOTH/EMPLOYEE/TRANSPORTER |
 | List all | `naffo_list_parties` | add `fields[]` for projection |
 | Count | `naffo_count_parties` | — |
 | One party | `naffo_get_party` | — |
@@ -100,7 +101,7 @@ naffo_list_outlet_stock_movements → outletId, productId, sinceDays
 ### Reports
 ```
 naffo_get_sales_report         → groupBy [date/customer/product/salesman/month]
-naffo_get_gstr1_summary        → fromDate, toDate (required)
+naffo_get_gstr1_summary        → fromDate, toDate  (India GST — skip if not applicable)
 ```
 
 ---
@@ -118,7 +119,7 @@ naffo_list_payments
 naffo_create_purchase_order    → vendorId, vendorName, financialYearId, lines[]
 naffo_list_purchase_requests   → status [DRAFT/SUBMITTED/APPROVED/REJECTED/CANCELLED/CONVERTED_TO_PO]
 naffo_get_purchase_request     → id
-naffo_get_gstr2_summary        → fromDate, toDate (required)
+naffo_get_gstr2_summary        → fromDate, toDate  (India GST — skip if not applicable)
 ```
 
 ### Production procurement (MR → RFQ → SQ → GRN → QC)
@@ -185,6 +186,8 @@ naffo_create_warehouse → name, code, type, capacityKg/Ltr
 
 ## 7. Dairy Procurement Lifecycle
 
+> **Dairy module only** — available when the org has dairy procurement enabled. Skip if not applicable.
+
 **Strictly ordered — never skip a step.**
 
 ```
@@ -194,7 +197,7 @@ Gate Pass (OUT) → Tanker Collection → Gate Entry (IN) → QC Test
 
 **Always start with:**
 ```
-naffo_get_dairy_procurement_dashboard  → KPIs: collection, BMC receiving, pending settlements
+naffo_get_dairy_procurement_dashboard  → KPIs: collection, pending settlements
 naffo_get_dairy_operation_contract({ operation: "COLLECTION" })  → permitted tools + cycle state
 naffo_dairy_procurement_whoami   → current pending items
 naffo_dairy_procurement_next_step → recommended next action
@@ -254,7 +257,7 @@ naffo_get_manufacturing_bom              → id
 ### Production flow engine (advanced)
 ```
 naffo_production_flows_overview
-naffo_production_flow_search             → query, status [DRAFT/ACTIVE/ARCHIVED], industry
+naffo_production_flow_search             → query, status [DRAFT/ACTIVE/ARCHIVED], industry (optional filter)
 naffo_production_flow_get                → flowId
 naffo_list_active_production_flow_runs
 naffo_list_production_flow_runs          → flowId, status [DRAFT/IN_PROGRESS/COMPLETED/CANCELLED]
@@ -298,10 +301,10 @@ naffo_get_bank_ledger      → bankId, fromDate, toDate
 naffo_create_fund_transfer → fromAccountType, toAccountType, transferMode, amount, confirm: true
 ```
 
-**GST:**
+**Tax reports** *(region-dependent — check which apply to your org):*
 ```
-naffo_get_gstr1_summary   → fromDate, toDate
-naffo_get_gstr2_summary   → fromDate, toDate
+naffo_get_gstr1_summary   → fromDate, toDate  (India: GST output summary)
+naffo_get_gstr2_summary   → fromDate, toDate  (India: GST input tax credit summary)
 ```
 
 ---
@@ -359,7 +362,7 @@ naffo_list_loans / naffo_get_loan / naffo_create_loan / naffo_record_loan_emi
 naffo_list_investments / naffo_get_investment / naffo_create_investment
 
 naffo_list_other_current_assets / naffo_create_other_current_asset
-  (prepaid, advance tax, TDS receivable, security deposit)
+  (e.g. prepaid expenses, withholding tax receivable, security deposit)
 ```
 
 ---
@@ -389,5 +392,5 @@ naffo_list_other_current_assets / naffo_create_other_current_asset
 ## 16. Response style
 
 Lead with the answer → key numbers → one clear next step.  
-Reply in the user's language (Gujarati / Hindi / English / Hinglish).  
+Reply in the user's language.  
 Surface caveats in **one short line** — never bury warnings.

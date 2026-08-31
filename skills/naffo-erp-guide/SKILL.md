@@ -1,13 +1,13 @@
 ---
 name: naffo-erp-guide
-description: Use this skill when working with the Naffo ERP platform — creating sales or purchase invoices, recording payments/receipts, checking stock, GST summaries, dairy procurement workflows (center → collection → gate pass → QC → weighbridge → settlement), CRM leads, and task management. Guides correct tool usage, required fields, and validation rules.
-when_to_use: Naffo ERP, create invoice, record payment, check stock, GST report, dairy procurement, CRM lead, task, who am I in Naffo, connect to Naffo, Naffo tool usage, sale invoice, purchase invoice, bank account, party outstanding, trial balance, balance sheet, purchase order, goods receipt, batch tracking, warehouse, quotation, delivery challan.
+description: Use this skill when working with the Naffo ERP platform — creating sales or purchase invoices, recording payments/receipts, checking stock, tax summaries, module-specific workflows (dairy, manufacturing, etc.), CRM leads, and task management. Guides correct tool usage, required fields, and validation rules.
+when_to_use: Naffo ERP, create invoice, record payment, check stock, tax report, dairy procurement, CRM lead, task, who am I in Naffo, connect to Naffo, Naffo tool usage, sale invoice, purchase invoice, bank account, party outstanding, trial balance, balance sheet, purchase order, goods receipt, batch tracking, warehouse, quotation, delivery challan.
 ---
 
 # Naffo ERP Guide
 
-Naffo is a full-stack Indian ERP covering sales, purchases, accounting, inventory,
-dairy procurement, manufacturing, CRM, and tasks. The MCP server exposes 466 tools.
+Naffo is a full-stack ERP covering sales, purchases, accounting, inventory,
+manufacturing, CRM, and tasks. The MCP server exposes 466+ tools.
 This skill defines the routing logic, golden sequence, and safety rules.
 
 ---
@@ -32,7 +32,8 @@ naffo_describe_tools({ names: ["naffo_create_sale_invoice"] })
 
 ```
 naffo_whoami          → username, org name, role (quick)
-naffo_get_my_profile  → full org: GSTIN, PAN, TAN, currency, FY start, doc prefixes
+naffo_get_my_profile  → full org profile: currency, FY start, doc prefixes,
+                        tax IDs (e.g. GSTIN/PAN/TAN for India — fields vary by country)
 naffo_get_mis_dashboard → opening snapshot: today's sales, receivables, payables, bank balances
 ```
 
@@ -52,7 +53,7 @@ naffo_get_mis_dashboard → opening snapshot: today's sales, receivables, payabl
 ```
 
 **`idempotencyKey` format:** `{operation}-{YYYYMMDD}-{short-desc}`
-e.g. `sale-20260830-bhargav-inv`, `receipt-20260830-raj-42`
+e.g. `sale-20260830-customer-inv`, `receipt-20260830-party-42`
 
 ---
 
@@ -60,7 +61,7 @@ e.g. `sale-20260830-bhargav-inv`, `receipt-20260830-raj-42`
 
 | Goal | Tool | Key params |
 |---|---|---|
-| Search by name/phone/GSTIN | `naffo_search_party` | `query`, `type` [CUSTOMER/VENDOR/BOTH/EMPLOYEE/TRANSPORTER] |
+| Search by name/phone/tax ID | `naffo_search_party` | `query`, `type` [CUSTOMER/VENDOR/BOTH/EMPLOYEE/TRANSPORTER] |
 | List all | `naffo_list_parties` | `type`, `fields` array for projection |
 | Count | `naffo_count_parties` | — |
 | One party detail | `naffo_get_party` | `partyId` |
@@ -70,7 +71,7 @@ e.g. `sale-20260830-bhargav-inv`, `receipt-20260830-raj-42`
 | Bill-level open items (Tally) | `naffo_get_bill_wise_outstanding` | `side` [AR/AP] |
 | Create party | `naffo_create_party` | `name`, `type`, `businessCategory` [B2C/B2B/HORECA] |
 
-> `naffo_get_party_outstandings` → plain balance. `naffo_get_outstanding_aging` → explicit bucket request. `naffo_get_receivables_payables_ageing(side:"AR")` → if Tally is connected and user wants Tally-matched data.
+> `naffo_get_party_outstandings` → plain balance. `naffo_get_outstanding_aging` → explicit bucket request only.
 
 ---
 
@@ -101,8 +102,13 @@ naffo_list_quotations           → status [DRAFT/SENT/ACCEPTED/REJECTED/EXPIRED
 naffo_create_sales_order        → deliveryDate, customerId, items[]
 naffo_list_sales_orders         → status [DRAFT/CONFIRMED/DISPATCHED/INVOICED/CANCELLED]
 naffo_create_delivery_challan   → vehicleNumber, driverName, dispatchTime, items[]
-naffo_get_gstr1_summary         → fromDate, toDate (required)
 naffo_log_followup_manual       → followUpId, phone, messageBody
+```
+
+Tax summary (if applicable for your region):
+```
+naffo_get_gstr1_summary   → fromDate, toDate  (India GST — skip if not applicable)
+naffo_get_gstr2_summary   → fromDate, toDate  (India GST — skip if not applicable)
 ```
 
 ---
@@ -115,7 +121,6 @@ naffo_list_purchase_invoices        → status [DRAFT/UNPAID/PARTIAL/PAID/CANCEL
 naffo_get_purchase_invoice
 naffo_record_payment                → paymentMode [CASH/BANK/CHEQUE]
 naffo_list_payments
-naffo_get_gstr2_summary             → fromDate, toDate (required)
 
 # Full procurement flow (MR → RFQ → SQ → PO → GRN → QC)
 naffo_create_material_request       → lines[], mrType [PURCHASE/MATERIAL_TRANSFER/MATERIAL_ISSUE/MANUFACTURE]
@@ -162,6 +167,8 @@ naffo_get_warehouse                 → warehouseId (includes stock balances)
 
 ## Dairy Procurement Lifecycle
 
+> **Dairy module only** — these tools are available only when the org has dairy procurement enabled. Skip this section if not applicable.
+
 **Strict order — never skip a step.**
 
 ```
@@ -172,7 +179,7 @@ Gate Pass OUT → Tanker Collection (per compartment) → Gate Entry IN
 
 **Start here every time:**
 ```
-naffo_get_dairy_procurement_dashboard  → daily KPIs: collection, BMC, pending settlements
+naffo_get_dairy_procurement_dashboard  → daily KPIs: collection, pending settlements
 naffo_get_dairy_operation_contract({ operation: "COLLECTION" })  → permitted tools + current state
 naffo_get_dairy_procurement_cycle_state                          → what step is pending
 ```
@@ -225,10 +232,10 @@ naffo_get_receivables_payables_ageing → side [AR/AP]
 naffo_get_bill_wise_outstanding     → side [AR/AP]
 ```
 
-GST:
+**Tax reports** *(region-dependent — check which apply to your org):*
 ```
-naffo_get_gstr1_summary   → fromDate, toDate (required)
-naffo_get_gstr2_summary   → fromDate, toDate (required)
+naffo_get_gstr1_summary   → fromDate, toDate  (India: GST output summary)
+naffo_get_gstr2_summary   → fromDate, toDate  (India: GST input tax credit summary)
 ```
 
 ---
@@ -289,6 +296,7 @@ naffo_create_project
 - Financial writes are **not auto-reversible** — confirm with user before calling.
 - `organizationId` always from the authenticated session — never from user input.
 - Numbers in responses must exactly match tool output — never re-round.
+- Reply in the user's language.
 
 ---
 
@@ -301,7 +309,7 @@ For full detail see `naffo-optimization` skill.
 | Goal | Tool | Lambda? |
 |---|---|---|
 | Data quality check | `naffo_check_forecast_readiness` | No |
-| Demand character (rolling, lags, YoY, seasons) | `naffo_get_demand_features` | No |
+| Demand character (rolling, lags, YoY, seasonality) | `naffo_get_demand_features` | No |
 | Trend direction (GROWTH/FLAT/DECLINE) | `naffo_get_demand_trend` | No |
 | Structural demand drop guard | `naffo_detect_changepoint` | No |
 | Probabilistic forecast (p10/p50/p90) | `naffo_forecast_demand` | **Yes** |

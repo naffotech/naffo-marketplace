@@ -35,17 +35,19 @@ HHI = Σ (each customer's share %)²
 
 ## Step 3 — Output
 
+Use the org's currency symbol from `naffo_get_my_profile`. Replace `[curr]` with it below.
+
 ```
 REVENUE CONCENTRATION — [Period]
 ══════════════════════════════════════════════════════
-Customer         Revenue      Share    Cumulative
+Customer         Revenue          Share    Cumulative
 ──────────────────────────────────────────────────────
-[Name]           ₹XX,XXX      40%      40%
-[Name]           ₹XX,XXX      25%      65%
-[Name]           ₹XX,XXX      15%      80%
-[Others]         ₹XX,XXX      20%      100%
+[Name]           [curr]XX,XXX     40%      40%
+[Name]           [curr]XX,XXX     25%      65%
+[Name]           [curr]XX,XXX     15%      80%
+[Others]         [curr]XX,XXX     20%      100%
 ──────────────────────────────────────────────────────
-Total            ₹X,XX,XXX    100%
+Total            [curr]X,XX,XXX   100%
 
 HHI Score:         [value]
 Concentration:     LOW / MODERATE / HIGH
@@ -64,17 +66,19 @@ Top 3 customers:   [X]% of revenue
 
 ## Risk flags
 
+These thresholds are starting points — calibrate to your industry and risk appetite:
+
 | Condition | Flag |
 |---|---|
-| Any single customer > 25% | ⚠️ Key-account risk |
-| Any single customer > 40% | 🔴 Critical dependency |
-| Top 3 customers > 70% | ⚠️ Concentrated portfolio |
+| Any single customer > 25% | ⚠️ Key-account risk *(adjust to your comfort level)* |
+| Any single customer > 40% | 🔴 Critical dependency *(adjust to your comfort level)* |
+| Top 3 customers > 70% | ⚠️ Concentrated portfolio *(adjust to your comfort level)* |
 
 ## Recommended actions per risk level
 
 - **Low**: No action needed. Monitor quarterly.
 - **Moderate**: Actively pursue 2–3 new customers of similar size this quarter.
-- **High**: Immediate diversification priority. Set a target: no single customer > 20% within 12 months.
+- **High**: Immediate diversification priority. Set a target for maximum single-customer share (common benchmark: 20–25%) and a timeline to reach it.
 
 ## Rules
 

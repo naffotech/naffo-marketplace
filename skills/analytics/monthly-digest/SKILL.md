@@ -34,7 +34,7 @@ naffo_get_expense_summary({ fromDate, toDate })
 ```
 
 Returns totals by category and payment mode. Flag any category that jumped
-more than 20% vs the prior month.
+more than 20% vs the prior month (suggested starting threshold — calibrate to your business).
 
 ## Step 4 — Anomaly scan
 
@@ -54,34 +54,37 @@ Include HIGH and MEDIUM anomalies in the digest with their `suggested_action`.
 naffo_list_overdue_invoices()
 ```
 
-Total overdue amount and count. Flag any party overdue more than 60 days.
+Total overdue amount and count. Flag any party overdue beyond your standard credit terms
+(default 60 days — adjust to match your actual terms).
 
 ## Digest output format
+
+Use the org's currency symbol from `naffo_get_my_profile`. Replace `[curr]` with it below.
 
 ```
 # Monthly Digest — [Month Year]
 
 ## Key Numbers
-| Metric              | This Month | Last Month | Change  |
-|---------------------|------------|------------|---------|
-| Sales               | ₹XX,XXX    | ₹XX,XXX    | +/-XX%  |
-| Expenses            | ₹XX,XXX    | ₹XX,XXX    | +/-XX%  |
-| Net                 | ₹XX,XXX    | —          | —       |
-| Receivables (total) | ₹XX,XXX    | —          | —       |
-| Overdue (>30d)      | ₹X,XXX     | —          | —       |
+| Metric              | This Month    | Last Month    | Change  |
+|---------------------|---------------|---------------|---------|
+| Sales               | [curr]XX,XXX  | [curr]XX,XXX  | +/-XX%  |
+| Expenses            | [curr]XX,XXX  | [curr]XX,XXX  | +/-XX%  |
+| Net                 | [curr]XX,XXX  | —             | —       |
+| Receivables (total) | [curr]XX,XXX  | —             | —       |
+| Overdue (>30d)      | [curr]X,XXX   | —             | —       |
 
 ## Top 5 Customers (by sales)
-1. [Name] — ₹X,XXX
+1. [Name] — [curr]X,XXX
 ...
 
 ## Top 5 Products
-1. [Product] — X units / ₹X,XXX
+1. [Product] — X units / [curr]X,XXX
 ...
 
 ## Expense Highlights
-| Category        | Amount    | vs Last Month |
-|-----------------|-----------|---------------|
-| [Category]      | ₹X,XXX    | +/-XX%        |
+| Category        | Amount         | vs Last Month |
+|-----------------|----------------|---------------|
+| [Category]      | [curr]X,XXX    | +/-XX%        |
 
 ## Anomalies & Alerts
 - ⚠️ [description] → [suggested_action]
@@ -94,5 +97,5 @@ Total overdue amount and count. Flag any party overdue more than 60 days.
 
 - Numbers must come from tool output — never estimate or invent.
 - Always state the month and date range clearly.
-- Reply in the user's language (Hindi / Gujarati / English / Hinglish).
+- Reply in the user's language.
 - The "One Recommended Action" must be grounded in the data (e.g. biggest overdue customer, biggest expense spike, low stock).

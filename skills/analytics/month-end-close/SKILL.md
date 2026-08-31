@@ -1,7 +1,7 @@
 ---
 name: month-end-close
-description: Run a structured month-end bookkeeping close checklist using Naffo ERP — reconcile transactions, check GST, verify trial balance, detect anomalies, and confirm books are clean before moving to the next month.
-when_to_use: month-end close, close the books, monthly reconciliation, book closing, GST filing, check trial balance, month-end checklist, reconcile accounts, verify books, accounting close.
+description: Run a structured month-end bookkeeping close checklist using Naffo ERP — reconcile transactions, check applicable taxes, verify trial balance, detect anomalies, and confirm books are clean before moving to the next month.
+when_to_use: month-end close, close the books, monthly reconciliation, book closing, tax filing, check trial balance, month-end checklist, reconcile accounts, verify books, accounting close.
 ---
 
 # Month-End Close
@@ -37,7 +37,7 @@ naffo_get_party_outstandings({ type: "VENDOR" })    → what you owe vendors
 naffo_list_overdue_invoices()                        → invoices past due
 ```
 
-List any invoices overdue by more than 30 days with recommended action.
+List any invoices overdue beyond your standard credit terms (default 30 days — adjust to your payment terms).
 
 ## Step 4 — Reconcile bank accounts
 
@@ -74,18 +74,23 @@ naffo_get_cash_flow_statement({ fromDate, toDate })
 
 Confirms net cash movement matches the bank reconciliation.
 
-## Step 6 — GST check
+## Step 6 — Tax compliance check
+
+Run the applicable tax summary for your region:
 
 ```
+# India (GST):
 naffo_get_gstr1_summary({ fromDate, toDate })  → outward supply (sales tax)
 naffo_get_gstr2_summary({ fromDate, toDate })  → inward supply (ITC)
+
+# Other regions: use your applicable tax reporting tools
 ```
 
-Confirm totals match the invoice register. Flag any GSTIN mismatch or missing data.
+Confirm totals match the invoice register. Flag any mismatch or missing data.
 
 ## Step 7 — Close confirmation
 
-Present the close summary:
+Present the close summary using the org's currency (from `naffo_get_my_profile`):
 
 ```
 MONTH-END CLOSE — [Month Year]
@@ -93,11 +98,10 @@ MONTH-END CLOSE — [Month Year]
 Checklist                             Status
 ───────────────────────────────────────────────
 Anomalies reviewed                    ✓ / ⚠️ N open
-Receivables reviewed                  ✓ / ⚠️ ₹X overdue
-Bank reconciliation                   ✓ RECONCILED / ❌ ₹X diff
+Receivables reviewed                  ✓ / ⚠️ [amount] overdue
+Bank reconciliation                   ✓ RECONCILED / ❌ [amount] diff
 Trial balance balanced                ✓ / ❌
-GSTR-1 outward total                  ₹XX,XXX
-GSTR-2 ITC total                      ₹XX,XXX
+Tax summary confirmed                 ✓ / ⚠️ (if applicable)
 ═══════════════════════════════════════════════
 Recommendation: CLOSE / HOLD (reason)
 ```
@@ -112,7 +116,8 @@ Recommendation: CLOSE / HOLD (reason)
 
 ## Rules
 
-- Close within the first 5 business days of the following month.
+- Target: close within the first 5 business days of the following month.
 - Do not mark as closed if bank reconciliation shows any difference.
 - HIGH anomalies from `naffo_detect_anomalies` must be reviewed before closing.
-- GST filing deadlines: GSTR-1 by 11th, GSTR-3B by 20th of the following month.
+- Tax filing deadlines vary by country and filing type — check with your accountant
+  or tax authority for the applicable deadlines in your jurisdiction.

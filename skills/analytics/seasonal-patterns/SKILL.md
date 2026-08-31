@@ -1,13 +1,14 @@
 ---
 name: seasonal-patterns
-description: Detect monthly revenue and expense seasonality using 12–24 months of Naffo ERP sales data. Calculates a seasonal index per month, identifies peak and trough periods, and gives cash planning recommendations — especially useful for dairy and food businesses.
-when_to_use: seasonal patterns, seasonality, which month is best, peak month, slow season, seasonal revenue, monthly trends, revenue trend, best time of year, festival season impact, Diwali sales, seasonal demand, seasonal analysis, revenue cycle, monthly sales pattern.
+description: Detect monthly revenue and expense seasonality using 12–24 months of Naffo ERP sales data. Calculates a seasonal index per month, identifies peak and trough periods, and gives cash planning recommendations — especially useful for businesses with festival-driven or harvest-linked demand.
+when_to_use: seasonal patterns, seasonality, which month is best, peak month, slow season, seasonal revenue, monthly trends, revenue trend, best time of year, festival season impact, seasonal demand, seasonal analysis, revenue cycle, monthly sales pattern.
 ---
 
 # Seasonal Pattern Analysis
 
-Reveals which months are strong and which are slow — critical for dairy, food,
-and agricultural businesses with festival-driven or harvest-linked demand.
+Reveals which months are strong and which are slow — critical for businesses
+with seasonal or festival-driven demand patterns (retail, food, agriculture,
+hospitality, and any industry with recurring peak periods).
 
 ## Step 1 — Monthly revenue (12–24 months)
 
@@ -47,21 +48,24 @@ Seasonal Index (month) = Month Revenue / Average Monthly Revenue × 100
 ```
 SEASONAL PATTERN — [Period]
 ══════════════════════════════════════════════════════════
-Month   Avg Revenue   Index   Avg Expense   Pattern
+Month   Avg Revenue      Index   Avg Expense    Pattern
 ──────────────────────────────────────────────────────────
-Jan     ₹X,XX,XXX       82    ₹XX,XXX       Slow start
-Feb     ₹X,XX,XXX       78    ₹XX,XXX       ▼ Trough
-Mar     ₹X,XX,XXX       95    ₹XX,XXX       Recovering
-Apr     ₹X,XX,XXX      105    ₹XX,XXX       ▲ Above avg
+Jan     [amount]           82    [amount]       Slow start
+Feb     [amount]           78    [amount]       ▼ Trough
+Mar     [amount]           95    [amount]       Recovering
+Apr     [amount]          105    [amount]       ▲ Above avg
 ...
-Oct     ₹X,XX,XXX      130    ₹XX,XXX       ▲▲ Diwali peak
-Nov     ₹X,XX,XXX      118    ₹XX,XXX       ▲ Above avg
-Dec     ₹X,XX,XXX       90    ₹XX,XXX       Cooling
+[Peak month]  [amount]    130    [amount]       ▲▲ [Peak event, e.g. Diwali / Christmas / Eid / harvest]
+[Next month]  [amount]    118    [amount]       ▲ Above avg
+[Off month]   [amount]     90    [amount]       Cooling
 ──────────────────────────────────────────────────────────
 Peak:   [Month] (Index [N])    Trough: [Month] (Index [N])
 Range:  [N] points — [Low / Moderate / High] seasonality
 ══════════════════════════════════════════════════════════
 ```
+
+Use the org's currency (from `naffo_get_my_profile`) for all amount columns.
+Label the peak event with the relevant festival or season for that business's market.
 
 ## Seasonality classification
 
@@ -83,4 +87,4 @@ Range:  [N] points — [Low / Moderate / High] seasonality
 - Need at least 12 months. If < 12 months: tell the user and do not compute an index.
 - With exactly 12 months: caveat that one-time events (new customer, closure) can distort the pattern.
 - Overlay seasonal patterns with `naffo_forecast_demand` results (from naffo-optimization skill) for the most accurate demand planning.
-- Always call out the Diwali / festival window explicitly for Indian dairy and food businesses.
+- For the peak event label: identify the relevant festival or holiday for this business's market (e.g. Diwali for India, Christmas/Easter for Western markets, Eid for Gulf/Southeast Asia, harvest periods for agricultural businesses). Ask the user if unclear.

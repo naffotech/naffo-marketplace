@@ -59,16 +59,18 @@ and show monthly cash accumulation rate instead.
 
 ## Step 4 — Three-scenario output
 
+Use the org's currency symbol from `naffo_get_my_profile`. Replace `[curr]` with it below.
+
 ```
 RUNWAY ANALYSIS — as of [Date]
 ═══════════════════════════════════════════════════════════
-Current Cash Balance:   ₹X,XX,XXX
+Current Cash Balance:   [curr]X,XX,XXX
 
                     Current     Lean (−20%)   Growth (+30%)
 ────────────────────────────────────────────────────────────
-Gross Burn/mo       ₹XX,XXX      ₹XX,XXX       ₹XX,XXX
-Monthly Revenue     ₹XX,XXX      ₹XX,XXX       ₹XX,XXX
-Net Burn/mo         ₹XX,XXX       ₹X,XXX       ₹XX,XXX
+Gross Burn/mo       [curr]XX,XXX  [curr]XX,XXX  [curr]XX,XXX
+Monthly Revenue     [curr]XX,XXX  [curr]XX,XXX  [curr]XX,XXX
+Net Burn/mo         [curr]XX,XXX  [curr]X,XXX   [curr]XX,XXX
 Runway (months)        N.N           N.N           N.N
 Cash-Out Date       [date]        [date]        [date]
 ═══════════════════════════════════════════════════════════
