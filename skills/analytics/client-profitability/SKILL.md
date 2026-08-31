@@ -35,16 +35,16 @@ High outstanding / revenue ratio = payment risk.
 naffo_list_overdue_invoices()
 ```
 
-Flag customers with invoices overdue > 30 days. Calculate days-overdue-weighted
-exposure per customer.
+Flag customers with invoices overdue > 30 days.
 
-## Step 4 — Aging buckets (if requested)
+## Step 3b — Tally-accurate aging (if Tally is synced)
 
 ```
-naffo_get_outstanding_aging({ type: "CUSTOMER" })
+naffo_get_receivables_payables_ageing({ side: "AR" })    → age buckets from Tally
+naffo_get_bill_wise_outstanding({ side: "AR" })          → bill-level open items
 ```
 
-For customers with outstanding balances, show which bucket their debt falls in.
+Use these for more accurate per-bill tracking when Tally sync is active.
 
 ## Output format
 

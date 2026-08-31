@@ -25,11 +25,18 @@ Cross-check with the dashboard's bank/cash balance summary.
 
 ## Step 2 — Monthly burn and revenue (last 3–6 months)
 
+**Option A — Expense summary (fastest):**
 ```
 naffo_get_expense_summary({ fromDate: "<3 months ago>", toDate: "<today>" })
 ```
 
-Returns total expenses by month. Calculate average monthly expenses (gross burn).
+**Option B — Cash flow statement (most accurate):**
+```
+naffo_get_cash_flow_statement({ fromDate: "<6 months ago>", toDate: "<today>" })
+```
+
+Use `naffo_get_cash_flow_statement` if available — it gives direct-method inflows
+and outflows which are more accurate than summing expenses separately.
 
 ```
 naffo_get_sales_report({ groupBy: "month", fromDate: "<3 months ago>", toDate: "<today>" })

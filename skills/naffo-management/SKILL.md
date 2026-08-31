@@ -1,14 +1,12 @@
 ---
 name: naffo-management
-description: Day-to-day operations for the Naffo ERP — invoices, parties, stock checks, payments, receipts, dairy procurement lifecycle, CRM follow-ups, financial reports, and task management. Use this skill when the user asks about something that has already happened or needs to be recorded right now.
-when_to_use: Create invoice, record payment, check stock, who owes money, party balance, outstanding, check receivables, record receipt, dairy procurement, gate pass, QC, weighbridge, settlement, sales report, purchase invoice, bank balance, GST, P&L, balance sheet, trial balance, CRM lead, follow up, task, overdue invoices, ledger, day book, expenses.
+description: Day-to-day operations for the Naffo ERP — invoices, parties, stock, batches, warehouse transfers, payments, receipts, dairy procurement lifecycle, manufacturing status, CRM follow-ups, financial reports, and task management. Use this skill when the user asks about something that has already happened or needs to be recorded right now.
+when_to_use: Create invoice, record payment, check stock, who owes money, party balance, outstanding, receivables, record receipt, dairy procurement, gate pass, QC, weighbridge, settlement, sales report, purchase invoice, bank balance, GST, P&L, balance sheet, trial balance, CRM lead, follow up, task, overdue invoices, ledger, day book, expenses, purchase order, GRN, batch expiry, stock transfer, warehouse, delivery challan, quotation, manufacturing batch.
 ---
 
 # Naffo Management
 
-Handles **all real-time, transactional, and operational** questions against the
-Naffo ERP: what's in stock, who owes us money, record a payment, check today's
-sales, follow up a CRM lead, run the dairy procurement cycle, view P&L.
+Handles **all real-time, transactional, and operational** questions against Naffo ERP.
 
 ---
 
@@ -18,206 +16,377 @@ sales, follow up a CRM lead, run the dairy procurement cycle, view P&L.
 naffo_navigate({ intent: "<user's goal in plain words>" })
 ```
 
-This returns 8–12 domain-specific tools and a routing tip tailored to the
-intent. Use **only those tools**. Do not guess tool names.
+Returns 8–12 domain-specific tools and a routing tip. Use **only those tools**.
 
----
-
-## 2. Identity & context
-
+For detailed schema of any tool:
 ```
-naffo_whoami          → quick: username, org name, role
-naffo_get_my_profile  → full org profile: GSTIN, PAN, currency, address
-naffo_get_mis_dashboard → opening snapshot: today's sales, receivables, payables, bank balances
-```
-
-Call `naffo_whoami` before any write. `organizationId` is locked to the
-authenticated session — never accept it from the user.
-
----
-
-## 3. Read workflows
-
-### Parties / outstanding
-
-| Goal | Tool |
-|---|---|
-| Count by type | `naffo_count_parties` |
-| List all or search by name | `naffo_list_parties` / `naffo_search_party` |
-| One party detail | `naffo_get_party` |
-| Current outstanding balance | `naffo_get_party_outstandings` |
-| Ageing buckets (0-30, 31-60, 61-90, 90+) | `naffo_get_outstanding_aging` |
-
-> **Rule:** Use `naffo_get_party_outstandings` for plain balance questions.
-> Only use `naffo_get_outstanding_aging` when the user explicitly asks for bucket analysis.
-
-### Sales & revenue
-
-```
-naffo_list_sale_invoices     → list / filter invoices (by party, date, status)
-naffo_get_sale_invoice       → one invoice detail with line items
-naffo_get_sales_report       → aggregate by product | customer | month
-naffo_list_overdue_invoices  → invoices past their due date
-naffo_log_followup_manual    → mark a follow-up message as sent (audit trail)
-```
-
-### Purchases & payables
-
-```
-naffo_list_purchase_invoices  → list / filter vendor bills
-naffo_get_purchase_invoice    → one vendor bill detail
-naffo_list_payments           → payment vouchers (money out to vendors)
-naffo_list_receipts           → receipt vouchers (money in from customers)
-```
-
-### Stock & inventory
-
-```
-naffo_get_stock_on_hand  → current qty per product (pass productId to scope one)
-naffo_get_stock_report   → type: summary | low-stock | valuation | movement | traceability
-```
-
-### Financial reports
-
-```
-naffo_get_trial_balance    → debit/credit/net per account as of date
-naffo_get_balance_sheet    → assets, liabilities, equity snapshot
-naffo_get_ledger_statement → chronological entries for one account or party
-naffo_get_day_book         → all transactions for a specific date
-naffo_get_gstr1_summary    → outward GST summary (B2B / B2C split)
-naffo_get_gstr2_summary    → inward GST / ITC summary
-```
-
-### Expenses & operating income
-
-```
-naffo_list_expenses            → operating expense and income entries
-naffo_get_expense              → one entry detail
-naffo_get_expense_summary      → totals by category and payment mode
-naffo_list_expense_categories  → all expense/income categories
-```
-
-### Bank & cash
-
-```
-naffo_list_bank_accounts  → all bank, cash, overdraft accounts
-naffo_get_bank_account    → one account detail
-naffo_get_bank_ledger     → full ledger for one bank account
+naffo_describe_tools({ names: ["naffo_create_sale_invoice"] })
 ```
 
 ---
 
-## 4. Dairy procurement lifecycle
-
-The lifecycle is **strictly ordered**. Never skip a step.
+## 2. Identity & snapshot
 
 ```
-Gate Pass (OUT) → Collection → Gate Entry (IN) → QC → Weighbridge → Settlement
+naffo_whoami              → username, org name, role
+naffo_get_my_profile      → GSTIN, PAN, TAN, currency, FY start
+naffo_get_mis_dashboard   → today's sales, receivables, payables, bank balances
+```
+
+---
+
+## 3. Parties & outstanding
+
+| Goal | Tool | Note |
+|---|---|---|
+| Search by name/phone/GSTIN | `naffo_search_party` | `type`: CUSTOMER/VENDOR/BOTH/EMPLOYEE/TRANSPORTER |
+| List all | `naffo_list_parties` | add `fields[]` for projection |
+| Count | `naffo_count_parties` | — |
+| One party | `naffo_get_party` | — |
+| Plain balance | `naffo_get_party_outstandings` | `balanceType`: DR/CR/SETTLED/NOT_COMPUTED/ANY |
+| Aging buckets | `naffo_get_outstanding_aging` | `type`: CUSTOMER/VENDOR/BOTH |
+| AR/AP aging (Tally) | `naffo_get_receivables_payables_ageing` | `side`: **AR** or **AP** |
+| Open bills (Tally) | `naffo_get_bill_wise_outstanding` | `side`: AR or AP |
+| Overdue invoices | `naffo_list_overdue_invoices` | `minDaysOverdue`, `maxDaysOverdue`, `partyId` |
+
+> Plain balance → `naffo_get_party_outstandings`.  
+> Explicit aging bucket request → `naffo_get_outstanding_aging`.  
+> Tally-connected orgs prefer `naffo_get_receivables_payables_ageing(side:"AR")` for accuracy.
+
+---
+
+## 4. Sales
+
+### Invoices & receipts
+```
+naffo_create_sale_invoice      → invoiceDate, customerId, paymentType, lines[productId+qty+rate]
+                                   paymentType: CASH/CARD/CREDIT/CHEQUE/ONLINE/UPI/BANK/SALARY_DEDUCTION/WALLET
+naffo_list_sale_invoices       → partyId, status [DRAFT/UNPAID/PARTIAL/PAID/CANCELLED/GST_FILED/ANY]
+naffo_get_sale_invoice         → invoiceId
+naffo_record_receipt           → partyId, amount, receiptDate, paymentMode, confirm: true
+                                   paymentMode: CASH/CHEQUE/BANK/UPI/CARD/CREDIT
+naffo_list_receipts
+naffo_log_followup_manual      → followUpId, phone, messageBody
+```
+
+### Quotations & orders
+```
+naffo_create_quotation         → quotationDate, partyName, lines[productName+qty+rate]
+naffo_list_quotations          → status [DRAFT/SENT/ACCEPTED/REJECTED/EXPIRED/ANY]
+naffo_get_quotation            → quotationId
+
+naffo_create_sales_order       → customerId, orderDate, items[productId+qty+rate]
+naffo_list_sales_orders        → status [DRAFT/CONFIRMED/DISPATCHED/INVOICED/CANCELLED]
+naffo_get_sales_order          → orderId
+naffo_get_sales_order_dashboard
+```
+
+### Delivery
+```
+naffo_create_delivery_challan  → vehicleNumber, driverName, dispatchTime, items[]
+naffo_list_delivery_challans   → status [PENDING/DISPATCHED/IN_TRANSIT/DELIVERED/CANCELLED]
+naffo_get_delivery_challan     → challanId
+```
+
+### POS
+```
+naffo_pos_list_outlets
+naffo_get_pos_daily_summary    → date, outletId, topN
+naffo_list_outlet_orders       → outletId, status [DRAFT/SUBMITTED/FULFILLED/CANCELLED]
+naffo_get_outlet_stock_matrix  → outletId, productId, includeExpiring
+naffo_list_outlet_stock_movements → outletId, productId, sinceDays
+```
+
+### Reports
+```
+naffo_get_sales_report         → groupBy [date/customer/product/salesman/month]
+naffo_get_gstr1_summary        → fromDate, toDate (required)
+```
+
+---
+
+## 5. Purchases & Procurement
+
+### Simple purchase flow
+```
+naffo_create_purchase_invoice  → invoiceDate, vendorId, paymentType, lines[productId+qty+rate]
+                                   paymentType: CASH/CREDIT/CHEQUE/ONLINE/UPI/BANK
+naffo_list_purchase_invoices   → vendorId, status [DRAFT/UNPAID/PARTIAL/PAID/CANCELLED/GST_FILED/ANY]
+naffo_get_purchase_invoice     → invoiceId
+naffo_record_payment           → partyId, amount, paymentDate, paymentMode, confirm: true
+naffo_list_payments
+naffo_create_purchase_order    → vendorId, vendorName, financialYearId, lines[]
+naffo_list_purchase_requests   → status [DRAFT/SUBMITTED/APPROVED/REJECTED/CANCELLED/CONVERTED_TO_PO]
+naffo_get_purchase_request     → id
+naffo_get_gstr2_summary        → fromDate, toDate (required)
+```
+
+### Production procurement (MR → RFQ → SQ → GRN → QC)
+```
+naffo_procurement_overview               → live counts
+naffo_create_material_request            → lines[], mrType [PURCHASE/MATERIAL_TRANSFER/MATERIAL_ISSUE/MANUFACTURE]
+naffo_update_material_request            → materialRequestId, status [SUBMITTED/STOPPED/CANCELLED]
+naffo_create_rfq_from_material_request   → materialRequestId, vendors[]
+naffo_list_procurement_rfqs              → status [DRAFT/SENT/QUOTED/CLOSED/CANCELLED]
+naffo_create_supplier_quotation          → vendorId, vendorName, lines[], rfqId
+naffo_update_supplier_quotation          → supplierQuotationId, status [RECEIVED/SELECTED/REJECTED/EXPIRED]
+naffo_create_purchase_order_from_supplier_quotation → supplierQuotationId
+naffo_create_procurement_grn             → vendorId, vendorName, lines[], poId
+naffo_create_grn_quality_inspections     → grnId
+naffo_update_quality_inspection          → qualityInspectionId, readings[], status [ACCEPTED/REJECTED/ON_HOLD]
+naffo_submit_procurement_grn             → grnId, confirm: true  ← posts stock
+naffo_list_procurement_grns              → status [DRAFT/QUALITY_INSPECTION_PENDING/QUALITY_APPROVED/SUBMITTED/COMPLETED/CANCELLED]
+```
+
+### Transport bills
+```
+naffo_create_procurement_transport_bill  → billDate, transporterId
+naffo_pay_procurement_transport_bill     → transportBillId, amount, confirm: true
+```
+
+---
+
+## 6. Stock & Inventory
+
+### On-hand & reports
+```
+naffo_get_stock_on_hand      → productId (optional to scope one), asOfDate
+naffo_get_stock_report       → type [summary/low-stock/valuation/movement/traceability], productId
+```
+
+### Adjustments & transfers
+```
+naffo_record_stock_adjustment → adjustmentDate, reason, lines[]
+                                  reason: PHYSICAL_COUNT/DAMAGE/EXPIRY/THEFT/SAMPLING/EVAPORATION/SPILLAGE/LOSS/VARIANCE/OTHER
+naffo_list_stock_adjustments  → status [PENDING/APPROVED/REJECTED]
+naffo_record_stock_transfer   → fromType [MAIN/OUTLET], toType [MAIN/OUTLET], lines[]
+naffo_list_stock_transfers    → status [PENDING/DISPATCHED/RECEIVED/COMPLETED/CANCELLED], outletId
+```
+
+### Batches & FEFO
+```
+naffo_list_batches             → status [ACTIVE/EXPIRED/CONSUMED/ALL], nearExpiry (bool), expiryDays
+naffo_get_batch                → batchId
+naffo_list_batch_expiry_alerts → window [DAYS_7/DAYS_3/DAYS_1/EXPIRED], productId
+naffo_get_fefo_allocation      → productId (required), qty (required)
+naffo_batch_transfer_suggestions → productId, status [PENDING/ACCEPTED/REJECTED/ALL]
+naffo_get_batch_traceability   → batchId or batchNo
+naffo_batch_reverse_trace      → invoiceId or batchId
+```
+
+### Warehouses
+```
+naffo_list_warehouses  → type [COLD_ROOM/FREEZER/DRY_STORE/DISPATCH_BAY/SHOP/OTHER]
+naffo_get_warehouse    → warehouseId (includes stock balances)
+naffo_create_warehouse → name, code, type, capacityKg/Ltr
+```
+
+---
+
+## 7. Dairy Procurement Lifecycle
+
+**Strictly ordered — never skip a step.**
+
+```
+Gate Pass (OUT) → Tanker Collection → Gate Entry (IN) → QC Test
+               → Weighbridge Unload → Sync QC+Weight → Milk Transfer → Settlement
 ```
 
 **Always start with:**
 ```
-naffo_dairy_procurement_whoami     → current state and pending items
-naffo_dairy_procurement_next_step  → what to do next
+naffo_get_dairy_procurement_dashboard  → KPIs: collection, BMC receiving, pending settlements
+naffo_get_dairy_operation_contract({ operation: "COLLECTION" })  → permitted tools + cycle state
+naffo_dairy_procurement_whoami   → current pending items
+naffo_dairy_procurement_next_step → recommended next action
 ```
 
-Then follow the `nextTool` field in every response.
-
-| Step | Tool / Action |
+| Step | Tool |
 |---|---|
-| Check full lifecycle map | `naffo_dairy_procurement_stages` |
-| Get tools for one stage | `naffo_dairy_procurement_get_stage_tools({ stage })` |
-| Check status of one entity | `naffo_dairy_procurement_status({ entityType, entityId })` |
-| Execute a lifecycle step | `naffo_dairy_procurement_execute({ action, params })` |
-| Diagnose contractor/tanker issues | `naffo_check_dairy_contractor_tanker_capability` |
+| Create OUT gate pass | `naffo_create_dairy_gate_pass` |
+| Record collection (one per tanker compartment) | `naffo_record_dairy_tanker_bmc_collection` |
+| Record IN gate entry | `naffo_record_dairy_tanker_return` |
+| QC test | `naffo_record_dairy_qc_test` |
+| Weighbridge unload | `naffo_record_dairy_weighbridge_unload` |
+| Sync QC + weighed quantity | `naffo_sync_dairy_qc_weighed_quantity` |
+| Transfer QC-passed milk to tank | `naffo_transfer_qc_passed_milk` |
+| Finalize center settlement | `naffo_finalize_dairy_center_settlement` |
+| Pay center settlement | `naffo_pay_dairy_center_settlement` |
 
-Available `action` values for `naffo_dairy_procurement_execute`:
-- `create_gate_pass`
-- `record_collection`
-- `record_qc`
-- `record_weighbridge`
-- `finalize_settlement`
+Status tools:
+```
+naffo_list_dairy_gate_passes
+naffo_list_dairy_qc_tests
+naffo_list_dairy_settlements
+naffo_list_dairy_tanker_loads / naffo_list_dairy_tanker_unloads
+naffo_list_dairy_milk_transfers
+naffo_dairy_procurement_status({ entityType, entityId })
+```
 
-Available stage values for `naffo_dairy_procurement_get_stage_tools`:
-`CENTER` | `COLLECTION` | `GATE_PASS` | `QC` | `WEIGHBRIDGE` | `SETTLEMENT`
+Dairy masters:
+```
+naffo_list_dairy_centers / naffo_create_dairy_center
+naffo_list_dairy_contractors / naffo_create_dairy_contractor_with_tanker
+naffo_list_dairy_tankers / naffo_create_dairy_tanker
+naffo_list_dairy_tanks / naffo_create_dairy_tank
+naffo_list_dairy_farmers / naffo_create_dairy_farmer
+naffo_list_dairy_rate_charts / naffo_create_dairy_rate_chart
+naffo_list_dairy_quality_standards / naffo_create_dairy_quality_standard
+```
 
-> **If a step is blocked:** report the exact `code`, `message`, and recommended
-> next action from the response. Never skip ahead.
+If a step is blocked: report exact `code`, `message`, and `nextTool` from response.
 
 ---
 
-## 5. Procurement workflow (purchase requisition → PO → GRN)
+## 8. Manufacturing & Production
 
+### Status & batches
 ```
-naffo_procurement_whoami                         → pending MRs, RFQs, GRNs, QC tests
-naffo_procurement_next_step                      → recommended next action
-naffo_procurement_stages                         → full workflow map
-naffo_procurement_get_stage_tools({ stage })     → tools for MR | RFQ | SQ | PO | GRN | QC
-naffo_procurement_status({ entityType, entityId })
-```
-
----
-
-## 6. Write rules — mandatory
-
-Every write tool requires an `idempotencyKey`. Generate it as:
-```
-{operation}-{YYYYMMDD}-{short-desc}
-e.g. "receipt-20260830-bhargav-inv42"
+naffo_manufacturing_overview             → live counts
+naffo_list_manufacturing_plans           → status [OPEN/IN_PROGRESS/COMPLETED/CANCELLED]
+naffo_get_manufacturing_plan             → id
+naffo_list_manufacturing_batches         → status [DRAFT/PENDING_QC/COMPLETED/QC_FAILED/CANCELLED], recipe_id
+naffo_get_manufacturing_batch            → id
+naffo_resolve_manufacturing_qc           → batchId, result [PASS/FAIL]
+naffo_list_manufacturing_boms            → search, main_product_id
+naffo_get_manufacturing_bom              → id
 ```
 
-Before any financial write (invoice, payment, receipt):
-1. Resolve the party: `naffo_search_party` or `naffo_list_parties`
-2. Resolve any products: `naffo_search_item`
-3. For BANK mode: resolve the bank account: `naffo_list_bank_accounts`
-4. Ask the user to confirm amount + party **in one message** (not separate turns)
-5. Set `requiredFieldsConfirmed: true` only after user confirmation
-6. On error: read `code` + `message`. Call `nextTool` if provided. Retry once.
-
-### Key write tools
-
+### Production flow engine (advanced)
 ```
-naffo_create_sale_invoice      → requires invoiceDate, customerId, paymentType, lines[]
-naffo_create_purchase_invoice  → requires invoiceDate, vendorId, paymentType, lines[]
-naffo_record_receipt           → money in from customer (also needs confirm: true)
-naffo_record_payment           → money out to vendor   (also needs confirm: true)
-naffo_create_fund_transfer     → bank-to-bank or bank-to-cash transfer (needs confirm: true)
-naffo_create_operating_expense → record an operating expense or income entry
-```
-
----
-
-## 7. CRM & tasks
-
-```
-naffo_list_crm_leads    → pipeline view (filter by stage, priority, assignee, follow-up date)
-naffo_add_crm_activity  → log a call, WhatsApp message, meeting, or note
-naffo_crm_whoami        → pipeline / leads summary
-naffo_crm_next_step     → recommended next CRM action
-
-naffo_list_tasks        → open tasks (filter by project, status, priority)
-naffo_list_projects     → task projects
-naffo_create_project    → new task project
-naffo_tasks_whoami      → task backlog summary
-naffo_tasks_next_step   → recommended next task action
+naffo_production_flows_overview
+naffo_production_flow_search             → query, status [DRAFT/ACTIVE/ARCHIVED], industry
+naffo_production_flow_get                → flowId
+naffo_list_active_production_flow_runs
+naffo_list_production_flow_runs          → flowId, status [DRAFT/IN_PROGRESS/COMPLETED/CANCELLED]
+naffo_production_run_get                 → runId
+naffo_production_run_get_state           → runId (guides next input/output needed)
+naffo_production_run_update_stage        → runId, stageRunId, inputs[], outputs[], parameters{}
+naffo_production_run_complete            → runId, finalize: true
+naffo_get_production_flow_run_live_costs → runId
 ```
 
 ---
 
-## 8. Safety rules
+## 9. Financial Reports
 
-- **Never invent IDs, rates, or quantities.** Always resolve first.
-- Financial writes are **not auto-reversible** — confirm with user before executing.
+**Standard (always available):**
+```
+naffo_get_trial_balance       → asOfDate
+naffo_get_balance_sheet       → asOnDate
+naffo_get_day_book            → fromDate, toDate
+naffo_get_ledger_statement    → accountId or partyId; fromDate, toDate
+naffo_get_cash_flow_statement → fromDate, toDate
+naffo_get_expense_summary     → fromDate, toDate
+```
+
+**Tally-accurate (use when Tally is synced):**
+```
+naffo_get_pnl_from_legs               → fromDate, toDate, financialYearId
+naffo_get_balance_sheet_from_legs     → asOfDate, financialYearId
+naffo_get_trial_balance_from_legs     → asOfDate, financialYearId
+naffo_get_ledger_breakdown            → fromDate, toDate, rootGroup, ledgerSearch
+naffo_get_item_wise_breakdown         → fromDate, toDate, itemSearch (stock item P&L)
+naffo_get_receivables_payables_ageing → side [AR/AP], asOfDate
+naffo_get_bill_wise_outstanding       → side [AR/AP], asOfDate
+naffo_get_tally_voucher_summary       → fromDate, toDate
+```
+
+**Bank:**
+```
+naffo_list_bank_accounts   → classification [BANK/CASH/BANK_OD/ANY]
+naffo_get_bank_ledger      → bankId, fromDate, toDate
+naffo_create_fund_transfer → fromAccountType, toAccountType, transferMode, amount, confirm: true
+```
+
+**GST:**
+```
+naffo_get_gstr1_summary   → fromDate, toDate
+naffo_get_gstr2_summary   → fromDate, toDate
+```
+
+---
+
+## 10. Expenses & income
+
+```
+naffo_create_operating_expense  → date, categoryId, amount, transactionMode [EXPENSE/INCOME], paymentMode
+naffo_list_expenses             → categoryId, transactionMode [EXPENSE/INCOME/ANY], status [PAID/PENDING/CANCELLED/ANY]
+naffo_get_expense_summary       → fromDate, toDate
+naffo_list_expense_categories   → type [EXPENSE/INCOME/ANY]
+```
+
+---
+
+## 11. CRM & tasks
+
+```
+naffo_list_crm_leads    → pipelineId, stageId, priority [LOW/MEDIUM/HIGH/URGENT], dueBefore
+naffo_create_lead       → pipeline + party details
+naffo_update_lead       → leadId  ← use this to change stage (no separate move-stage tool)
+naffo_add_crm_activity  → leadId, type [CALL/WHATSAPP/MEETING/EMAIL/DEMO/NOTE/SITE_VISIT], outcome
+naffo_list_calendar_events → from, to, types[], include_overdue
+
+naffo_list_tasks        → projectId, status [TODO/IN_PROGRESS/REVIEW/DONE], priority
+naffo_list_projects
+naffo_create_project
+```
+
+---
+
+## 12. HR & Payroll
+
+```
+naffo_list_employees        → search, activeOnly, sortBy
+naffo_get_employee          → employeeId
+naffo_count_employees
+naffo_create_employee       → name, designation, department, salary, joiningDate
+naffo_list_departments / naffo_create_department
+naffo_list_payroll_records  → employeeId, month (YYYY-MM)
+```
+
+---
+
+## 13. Other assets
+
+```
+naffo_list_fixed_assets / naffo_get_fixed_asset / naffo_create_fixed_asset
+  depreciationType: SLM or WDV
+
+naffo_list_loans / naffo_get_loan / naffo_create_loan / naffo_record_loan_emi
+  loanType: SECURED/UNSECURED/LENT
+
+naffo_list_investments / naffo_get_investment / naffo_create_investment
+
+naffo_list_other_current_assets / naffo_create_other_current_asset
+  (prepaid, advance tax, TDS receivable, security deposit)
+```
+
+---
+
+## 14. Write rules — mandatory
+
+1. **Resolve first.** Party → `naffo_search_party`. Product → `naffo_search_item`. Bank → `naffo_list_bank_accounts`.
+2. **`idempotencyKey` on every write:** `{operation}-{YYYYMMDD}-{short-desc}`
+3. **One confirm message.** Ask user to confirm all values before calling any write tool.
+4. `requiredFieldsConfirmed: true` only after user confirms.
+5. `confirm: true` required for: `record_receipt`, `record_payment`, `create_fund_transfer`, `submit_procurement_grn`, `record_loan_emi`.
+6. On error: read `code` + `message`. If response includes `nextTool`, call it. Retry once.
+
+---
+
+## 15. Safety rules
+
+- Never invent IDs, rates, or quantities — always resolve first.
+- Financial writes are not auto-reversible — confirm with user before executing.
 - Never echo secrets, tokens, or session credentials.
-- `organizationId` is always from the authenticated session — never from the user.
-- Large lists: call a count tool first (`naffo_count_parties`) to understand scale.
-- Use cursor pagination (`nextCursor`, `hasMore`) for complete lists.
-- Numbers in your reply must **exactly match** what the tool returned — never re-round.
+- `organizationId` always from the authenticated session — never from the user.
+- Large lists: count first (`naffo_count_parties`), then paginate (`nextCursor`, `hasMore`).
+- Numbers in responses must **exactly match** tool output — never re-round.
 
 ---
 
-## 9. Response style
+## 16. Response style
 
 Lead with the answer → key numbers → one clear next step.  
 Reply in the user's language (Gujarati / Hindi / English / Hinglish).  
-Surface data freshness or caveats in **one short line** — never bury warnings.
+Surface caveats in **one short line** — never bury warnings.

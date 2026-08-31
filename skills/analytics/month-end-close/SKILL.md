@@ -51,12 +51,28 @@ Flag any difference greater than zero — do not close until reconciled.
 
 ## Step 5 — Trial balance
 
+**Standard (always available):**
 ```
 naffo_get_trial_balance()
 ```
 
+**Tally-accurate (use if Tally is synced — preferred):**
+```
+naffo_get_trial_balance_from_legs()           → financialYearId optional
+naffo_get_pnl_from_legs({ fromDate, toDate }) → accurate P&L from voucher legs
+naffo_get_ledger_breakdown({ fromDate, toDate, rootGroup: "Sales Accounts" })
+```
+
 Present debit/credit totals. Flag any account showing an unexpected balance
 (e.g. negative cash, uncleared suspense entries).
+
+## Step 5b — Cash flow statement
+
+```
+naffo_get_cash_flow_statement({ fromDate, toDate })
+```
+
+Confirms net cash movement matches the bank reconciliation.
 
 ## Step 6 — GST check
 
