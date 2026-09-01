@@ -56,7 +56,14 @@
         "CRM lead",
         "task management",
         "bank balance",
-        "ledger"
+        "ledger",
+        "purchase report",
+        "vendor spend",
+        "total cash collected",
+        "cash flow",
+        "payment summary",
+        "how much did we pay",
+        "operating cash flow"
       ]
     },
     {
@@ -201,7 +208,7 @@
     "url_placeholder": "https://naffo.tech/api/mcp",
     "note": "Each user gets their own authenticated MCP URL. Get it from naffo.tech → Settings → Integrations → MCP.",
     "tool_prefix": "naffo_",
-    "tool_count": 96
+    "tool_count": 99
   },
   "safety": [
     "Never invent IDs, amounts, or dates — always resolve via read tools first.",

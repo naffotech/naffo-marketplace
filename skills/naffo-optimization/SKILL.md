@@ -351,9 +351,10 @@ Always show `suggested_action` for every anomaly found.
 ## Cash flow planning
 
 ```
-naffo_get_cash_flow_statement({ fromDate, toDate })  → direct-method statement
-naffo_optimize_plan({ template: "cashflow_schedule", data: {...} })  → payment schedule
-naffo_optimize_plan({ template: "vendor_payment_order", data: {...} })  → vendor priority
+naffo_get_cash_flow_summary({ fromDate, toDate })  → operating/financing cash flow + closing balance
+naffo_get_payment_summary({ fromDate, toDate })    → receipts + payments totals by mode (scalar)
+naffo_optimize_plan({ template: "cashflow_schedule", data: {...} })  → payment schedule optimizer
+naffo_optimize_plan({ template: "vendor_payment_order", data: {...} })  → vendor priority optimizer
 ```
 
 ---

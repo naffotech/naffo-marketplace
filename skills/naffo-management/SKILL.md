@@ -101,6 +101,9 @@ naffo_list_outlet_stock_movements → outletId, productId, sinceDays
 ### Reports
 ```
 naffo_get_sales_report         → groupBy [date/customer/product/salesman/month]
+naffo_get_purchase_report      → groupBy [date/vendor/product/month]  ← aggregated purchase totals
+naffo_get_payment_summary      → total receipts + payments by mode for a period
+naffo_get_cash_flow_summary    → operating/financing breakdown + closing bank balance
 naffo_get_gstr1_summary        → fromDate, toDate  (India GST — skip if not applicable)
 ```
 
@@ -278,8 +281,11 @@ naffo_get_trial_balance       → asOfDate
 naffo_get_balance_sheet       → asOnDate
 naffo_get_day_book            → fromDate, toDate
 naffo_get_ledger_statement    → accountId or partyId; fromDate, toDate
-naffo_get_cash_flow_statement → fromDate, toDate
 naffo_get_expense_summary     → fromDate, toDate
+naffo_get_sales_report        → groupBy [date/customer/product/salesman/month]
+naffo_get_purchase_report     → groupBy [date/vendor/product/month]
+naffo_get_payment_summary     → total receipts + payments by mode (scalar totals, no raw rows)
+naffo_get_cash_flow_summary   → operating/financing cash flow + closing balance
 ```
 
 **Tally-accurate (use when Tally is synced):**
