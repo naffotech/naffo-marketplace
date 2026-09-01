@@ -26,6 +26,23 @@ For self-diagnostics on any specific tool's schema:
 naffo_describe_tools({ names: ["naffo_create_sale_invoice"] })
 ```
 
+### Capability gate — the catalog is deployment-specific
+
+The tool list this skill documents is a superset: an organisation's Naffo
+deployment may run an older server build that doesn't expose every tool named
+here. `naffo_describe_tools` returns unknown names in its `missing` array and
+never invents a schema.
+
+So before you rely on a tool that isn't part of the core CRUD set — anything in a
+step marked **(gated)** in `naffo-optimization`, for example — either let
+`naffo_navigate` hand you the tool, or confirm it with `naffo_describe_tools`.
+
+If a tool is missing:
+1. Say plainly which capability is unavailable on this deployment.
+2. Use the documented fallback for that step, if the skill defines one.
+3. Never substitute a similarly-named tool, and never fabricate the output the
+   missing tool would have produced.
+
 ---
 
 ## Step 1 — Confirm identity
@@ -110,6 +127,11 @@ Tax summary (if applicable for your region):
 naffo_get_gstr1_summary   → fromDate, toDate  (India GST — skip if not applicable)
 naffo_get_gstr2_summary   → fromDate, toDate  (India GST — skip if not applicable)
 ```
+
+> If `naffo_get_my_profile` returns a **GSTIN**, load the `india-gst` skill before
+> answering GST questions. It carries the return mapping (GSTR-1 / 2B / 3B), the
+> CGST-SGST vs IGST rule, ITC reconciliation order, e-invoice and e-way bill
+> boundaries, the April–March financial year, and lakh/crore formatting.
 
 ---
 

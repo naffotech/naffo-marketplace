@@ -18,10 +18,15 @@ npx skills add naffotech/naffo-marketplace
 
 ## Connect your MCP server
 
-Get your personal MCP URL from **naffo.tech → Settings → Integrations → MCP**.
+The `naffo` plugin bundles the MCP server. It's a shared OAuth 2.1 endpoint, so
+there is no personal URL to copy — Claude Code signs you in through the browser
+and you approve the `read`, `write`, and `destructive` scopes. Use `/mcp` to check
+or refresh the connection.
+
+For other clients, or to register the server outside the plugin:
 
 ```bash
-claude mcp add naffo --transport http <your-mcp-url>
+claude mcp add naffo --transport http https://naffo.tech/api/mcp
 ```
 
 Verify:
@@ -42,11 +47,35 @@ Who am I in Naffo?
 | `revenue-concentration` | Customer concentration risk with HHI score |
 | `seasonal-patterns` | Monthly revenue seasonality — peak/trough index, cash planning |
 | `runway-calculator` | Cash runway — burn rate, months of operation, three scenarios |
+| `india-gst` | India layer — GSTR-1/2B/3B mapping, ITC reconciliation, CGST-SGST vs IGST, GSTIN/HSN reading, e-invoice & e-way bill limits, April–March FY, lakh/crore formatting |
 
 ## Skill locations
 
-- Top-level (auto-detected by most CLIs): `skills/`
-- Plugin-bundled (identical copies): `plugins/naffo/skills/`
+- Top-level (source of truth, read by `npx skills add` and other agents): `skills/`
+- Plugin-bundled copy used by Claude Code plugin installs: `plugins/naffo/skills/`
+
+Claude Code copies only the plugin directory on install, so the plugin needs its own
+copy of each skill. Never edit `plugins/naffo/skills/` by hand — edit `skills/` and
+regenerate the mirror:
+
+```bash
+node scripts/sync-skills.mjs          # write the mirror
+node scripts/sync-skills.mjs --check  # CI: fail if it drifted
+```
+
+## Repo checks
+
+```bash
+node scripts/validate-repo.mjs        # manifests, version agreement, frontmatter,
+                                      # command allowed-tools, agents.json registration
+node scripts/check-live-tools.mjs     # every naffo_* name the skills use vs the live
+                                      # MCP catalog (network; add --strict to fail)
+```
+
+`.github/workflows/validate.yml` runs the first two on every push and PR. The live
+catalog check stays manual because it depends on the deployed server build: when it
+reports a tool as missing, that capability must sit behind a **(gated)** marker with
+a documented fallback, per the capability gate in `naffo-erp-guide`.
 
 ## Slash commands (Claude Code plugin only)
 

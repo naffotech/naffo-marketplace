@@ -1,6 +1,6 @@
 ---
 description: Analyze current inventory — stock levels, days of supply, expiry risk, and reorder alerts across all products or a specific product
-allowed-tools: mcp__naffo__naffo_navigate, mcp__naffo__naffo_get_stock_on_hand, mcp__naffo__naffo_get_stock_report, mcp__naffo__naffo_get_sales_report, mcp__naffo__naffo_detect_anomalies, mcp__naffo__naffo_search_item, mcp__naffo__naffo_whoami
+allowed-tools: mcp__naffo__naffo_navigate, mcp__naffo__naffo_get_stock_on_hand, mcp__naffo__naffo_get_stock_report, mcp__naffo__naffo_get_sales_report, mcp__naffo__naffo_detect_anomalies, mcp__naffo__naffo_get_business_intel, mcp__naffo__naffo_search_item, mcp__naffo__naffo_whoami
 ---
 
 Follow the `naffo-optimization` skill to analyze inventory health.
@@ -21,4 +21,7 @@ Steps:
    - ⚠️ EXCESS: days_of_supply > 60 days
 6. Run anomaly detection for the stock domain:
    `naffo_detect_anomalies({ domains: ["stock"], lookback_days: 30, baseline_days: 90 })`
-7. Present as a table with product, stock qty, days of supply, status, and recommended action.
+7. Pull the risk signals that inventory numbers alone don't show — **optional, skip
+   if this deployment doesn't expose the tool**:
+   `naffo_get_business_intel({ signals: ["sku_wastage_risk", "supplier_delivery_risk"] })`
+8. Present as a table with product, stock qty, days of supply, status, and recommended action.

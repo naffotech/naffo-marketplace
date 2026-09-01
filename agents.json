@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentprotocol.ai/schemas/agents.json/v1",
   "name": "naffo-marketplace",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, inventory optimization, business intelligence, and complete forecast-to-order decision chain.",
   "publisher": {
     "name": "Naffo Tech",
@@ -11,7 +11,7 @@
   "install": {
     "claude_code": "/plugin marketplace add naffotech/naffo-marketplace && /plugin install naffo",
     "skills_cli": "npx skills add naffotech/naffo-marketplace",
-    "mcp": "Get your personal MCP URL from naffo.tech → Settings → Integrations → MCP"
+    "mcp": "Add https://naffo.tech/api/mcp as an HTTP MCP server — a shared OAuth 2.1 endpoint, no token to paste"
   },
   "skills": [
     {
@@ -105,6 +105,43 @@
         "delivery routing",
         "uncertainty band",
         "confidence tier"
+      ]
+    },
+    {
+      "name": "india-gst",
+      "file": "skills/regional/india-gst/SKILL.md",
+      "description": "India-specific layer on top of the core skills — GST return mapping (GSTR-1 outward, GSTR-2B/ITC reconciliation, GSTR-3B, GSTR-9, CMP-08), CGST/SGST vs IGST from place of supply, GSTIN and HSN/SAC reading, post-GST-2.0 slabs (0/5/18/40), e-invoice and e-way bill boundaries, TDS/TCS touchpoints, April–March financial year, Indian festival/wedding/harvest seasonality, and lakh/crore number formatting. Load only when the org profile has a GSTIN or the user asks something India-specific.",
+      "triggers": [
+        "GST",
+        "GSTR-1",
+        "GSTR-2B",
+        "GSTR-3B",
+        "GSTR-9",
+        "ITC",
+        "input tax credit",
+        "CGST",
+        "SGST",
+        "IGST",
+        "place of supply",
+        "GSTIN",
+        "HSN",
+        "SAC",
+        "e-invoice",
+        "IRN",
+        "e-way bill",
+        "reverse charge",
+        "RCM",
+        "composition scheme",
+        "TDS",
+        "TCS",
+        "194Q",
+        "financial year April to March",
+        "GST filing",
+        "GST reconciliation",
+        "lakh",
+        "crore",
+        "GST kitna hai",
+        "GST filing kab hai"
       ]
     },
     {
@@ -205,10 +242,18 @@
   "mcp": {
     "server_name": "naffo",
     "transport": "http",
-    "url_placeholder": "https://naffo.tech/api/mcp",
-    "note": "Each user gets their own authenticated MCP URL. Get it from naffo.tech → Settings → Integrations → MCP.",
+    "url": "https://naffo.tech/api/mcp",
+    "auth": {
+      "type": "oauth2.1",
+      "protected_resource_metadata": "https://naffo.tech/.well-known/oauth-protected-resource",
+      "authorization_server_metadata": "https://naffo.tech/.well-known/oauth-authorization-server",
+      "dynamic_client_registration": true,
+      "pkce": "S256",
+      "scopes": ["read", "write", "destructive"],
+      "note": "Single shared endpoint. No per-user URL and no token in the URL — the client discovers the authorization server and signs the user in through the browser. Unauthenticated tools/list works for catalog discovery; every tool call needs a token."
+    },
     "tool_prefix": "naffo_",
-    "tool_count": 99
+    "tool_count": 466
   },
   "safety": [
     "Never invent IDs, amounts, or dates — always resolve via read tools first.",

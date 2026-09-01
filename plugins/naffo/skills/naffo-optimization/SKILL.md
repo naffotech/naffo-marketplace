@@ -1,7 +1,7 @@
 ---
 name: naffo-optimization
-description: Demand forecasting, production planning, inventory optimization, batch expiry risk, stock transfer recommendations, dairy production planning, constraint-based allocation, cash flow planning, and anomaly detection using Naffo ERP data. Use this skill when the user asks what they should do next — how much to produce, what to order, where to transfer stock, what the demand outlook looks like, or whether anything looks wrong.
-when_to_use: Demand forecast, production plan, what should I produce, how much to order, inventory health, days of supply, low stock alert, batch expiry, expiry risk, near-expiry, FEFO, stock transfer, which outlet needs stock, cash flow plan, vendor payment priority, anomaly detection, something looks off, kitna banana chahiye, kitna order karein, reorder, overstock, milk procurement planning, standardization, dairy recipe, production flow, batch cost, yield, planning run.
+description: Demand forecasting, production planning, inventory optimization, batch expiry risk, stock transfer recommendations, module-specific planning (dairy, manufacturing, etc.), constraint-based allocation, cash flow planning, anomaly detection, business intelligence signals, and complete forecast-to-order decision chain using Naffo ERP data. Use this skill when the user asks what they should do next — how much to produce, what to order, where to transfer stock, what the demand outlook looks like, or whether anything looks wrong.
+when_to_use: Demand forecast, production plan, what should I produce, how much to order, inventory health, days of supply, low stock alert, batch expiry, expiry risk, near-expiry, FEFO, stock transfer, which outlet needs stock, cash flow plan, vendor payment priority, anomaly detection, something looks off, reorder, overstock, production flow, batch cost, yield, planning run, business intel, customer churn, wastage risk, supplier risk, shift scheduling, delivery routing, forecast scenarios, order scenarios, changepoint, demand trend, demand features, uncertainty band, newsvendor, MOQ, safety stock, decision hardening, approval gate.
 ---
 
 # Naffo Optimization & Planning
@@ -163,7 +163,7 @@ naffo_list_outlet_stock_movements({ sinceDays: 7 })
   (D) Maximize production volume
 
 **Q2 — Hard constraints:**
-  (A) Budget cap: ₹___
+  (A) Budget cap: [amount in your currency]___
   (B) Machine / production hours: ___ hours
   (C) Storage / vehicle capacity: ___ units
   (D) No hard limit
@@ -174,7 +174,7 @@ naffo_list_outlet_stock_movements({ sinceDays: 7 })
 
 | Business question | Template |
 |---|---|
-| "₹X budget — what to buy, how much?" | `order_allocation` |
+| "Budget-constrained — what to buy, how much?" | `order_allocation` |
 | "What to produce this week given capacity?" | `production_plan` |
 | "Move stock between warehouses / outlets?" | `stock_transfer` |
 | "How much milk to accept from each center?" | `milk_procurement` |
@@ -186,7 +186,7 @@ naffo_list_outlet_stock_movements({ sinceDays: 7 })
 naffo_optimize_plan({
   template: "<chosen template>",
   data:     { ...template payload... },
-  budget:   500000,
+  budget:   <your budget amount>,
 })
 ```
 
@@ -204,6 +204,8 @@ Optimizer status:
 ---
 
 ## Dairy milk procurement planning
+
+> **Dairy module only** — available when the org has dairy procurement enabled.
 
 ```
 naffo_optimize_plan({
@@ -228,6 +230,8 @@ naffo_get_dairy_procurement_dashboard → daily milk KPIs
 ---
 
 ## Dairy production planning
+
+> **Dairy module only** — available when the org has dairy production enabled.
 
 **Step-by-step dairy product planning:**
 
@@ -268,7 +272,7 @@ For BOMs with stages, constraints, and live cost tracking:
 ```
 # Discover
 naffo_production_flows_overview
-naffo_production_flow_search({ query, status: "ACTIVE", industry: "DAIRY" })
+naffo_production_flow_search({ query, status: "ACTIVE", industry: "<your industry>" })
 naffo_production_flow_get        → flowId (stages, inputs, outputs, formulas)
 
 # Pre-run checks
@@ -347,9 +351,10 @@ Always show `suggested_action` for every anomaly found.
 ## Cash flow planning
 
 ```
-naffo_get_cash_flow_statement({ fromDate, toDate })  → direct-method statement
-naffo_optimize_plan({ template: "cashflow_schedule", data: {...} })  → payment schedule
-naffo_optimize_plan({ template: "vendor_payment_order", data: {...} })  → vendor priority
+naffo_get_cash_flow_summary({ fromDate, toDate })  → operating/financing cash flow + closing balance
+naffo_get_payment_summary({ fromDate, toDate })    → receipts + payments totals by mode (scalar)
+naffo_optimize_plan({ template: "cashflow_schedule", data: {...} })  → payment schedule optimizer
+naffo_optimize_plan({ template: "vendor_payment_order", data: {...} })  → vendor priority optimizer
 ```
 
 ---
@@ -378,8 +383,8 @@ Recommended:        [X] units by [date]
 ```
 Product | Stock | Avg/day | DoS | Status     | Action
 --------|-------|---------|-----|------------|-------
-[name]  | X kg  | Y kg    | Z d | 🔴 CRITICAL | Order now
-[name]  | X kg  | Y kg    | Z d | ☠️ EXPIRY   | Transfer to [outlet]
+[name]  | X [unit] | Y [unit] | Z d | 🔴 CRITICAL | Order now
+[name]  | X [unit] | Y [unit] | Z d | ☠️ EXPIRY   | Transfer to [outlet]
 ```
 
 ### Optimizer plan
@@ -401,8 +406,8 @@ Next step: [what to do]
 |---|---|
 | `confidence_tier: VERY_LOW` | "⚠️ Estimate only — engine unavailable. Do not use for large orders." |
 | `confidence_tier: LOW` | "⚠️ Statistical estimate — verify before ordering." |
-| `data_points < 15` | "⚠️ Thin data — low confidence." |
-| `freshness_days > 30` | "⚠️ Last sale was N days ago. Verify data is complete." |
+| `data_points < 15` | "⚠️ Thin data — low confidence." *(threshold set by `naffo_check_forecast_readiness`)* |
+| `freshness_days > 30` | "⚠️ Last sale was N days ago. Verify data is complete." *(threshold set by tool)* |
 | Festival in window | "📅 Festival effect possible — conservative estimate may be low." |
 | `INFEASIBLE` optimizer | "❌ Constraints conflict — [state exactly]." |
 | `readiness.ready = false` | "❌ [list blocking errors]. Cannot proceed until resolved." |
@@ -418,3 +423,244 @@ Next step: [what to do]
 - If Predict Engine or Optimizer is unavailable, say so plainly.
 - Writes (planning runs, dairy plans, batch starts) require `idempotencyKey`.
 - Numbers must exactly match tool output — never re-round.
+
+---
+
+## Complete forecast-to-order decision chain
+
+For a single product, follow these steps in order. Steps 1, 5, and the stock/supply
+reads are the **required backbone** — never skip them. Steps marked **(gated)** call
+refinement tools that older Naffo deployments may not expose; when one is missing,
+apply the fallback in the table below, say which refinement was unavailable, and
+carry on. Never fabricate a gated tool's output.
+
+| Gated step | Tool | Fallback when the tool is missing |
+|---|---|---|
+| 2 | `naffo_get_demand_features` | Read the pattern off `naffo_get_demand_series` (gaps, spread, recent vs prior mean); no `confidence_boost` |
+| 3 | `naffo_get_demand_trend` | Compare period means from `naffo_get_demand_series` and label the direction yourself |
+| 4 | `naffo_detect_changepoint` | Ask the user directly: "Have you lost a customer or discontinued a line recently?" Apply no dampening without an answer |
+| 6 | `naffo_aggregate_forecast_range` | Present the naive `p10_total`..`p90_total` and state that the range overstates uncertainty |
+| 7 | `naffo_newsvendor_order_qty` | Cover to `p50_total − stock_on_hand − pending_supply`, and say the cost-optimal quantity wasn't computed |
+| 8 | `naffo_harden_order_decision` | Apply MOQ and lead-time checks manually from `naffo_get_product_forecast_context`; flag that guardrails weren't machine-checked |
+| 9 | `naffo_forecast_scenarios` | Build LOW/EXPECTED/HIGH by hand from p10/p50/p90 minus stock, without approval flags |
+
+Check availability once, up front, rather than discovering it mid-chain:
+```
+naffo_describe_tools({ names: [
+  "naffo_get_demand_features", "naffo_get_demand_trend", "naffo_detect_changepoint",
+  "naffo_aggregate_forecast_range", "naffo_newsvendor_order_qty",
+  "naffo_harden_order_decision", "naffo_forecast_scenarios"
+]})
+```
+Anything returned in `missing` is not on this deployment — take its fallback.
+
+### Step 1 — Data quality gate
+```
+naffo_check_forecast_readiness({ product_ids: [pid] })
+```
+| Status | Action |
+|---|---|
+| `READY` | Proceed |
+| `THIN` | Warn user — LOW confidence forecast |
+| `STALE` | Ask: "Has demand changed since then?" |
+| `NO_DATA` | Stop — tell user to record more sales first |
+
+### Step 2 — Demand character (pure math, no Lambda)
+```
+naffo_get_demand_features({ product_id: pid })
+```
+Returns: `demand_pattern` (STABLE/TREND/FESTIVAL_DRIVEN/VOLATILE),
+`confidence_boost` (+0.10/+0.05/0/−0.05), `yoy_growth_pct`, `momentum_7d`,
+`is_wedding_season` (India/South Asia: wedding season demand indicator),
+`is_harvest_season` (agricultural orgs: harvest season indicator), lag values (1d/7d/30d/365d).
+
+- **VOLATILE** → lower confidence; suggest collecting more data before large order.
+- **FESTIVAL_DRIVEN** → flag upcoming festival/peak-event window; check `is_wedding_season` if applicable (India/South Asia).
+- **TREND** → model captures direction; reliable for GROWTH patterns.
+- **STABLE** → most reliable; standard confidence.
+
+### Step 3 — Directional trend (pure math, no Lambda)
+```
+naffo_get_demand_trend({ product_id: pid, periods: 6 })
+```
+Returns: `direction` (GROWTH/FLAT/DECLINE), `trend_pct` (%).
+- **DECLINE** → run changepoint check (Step 4) before large order.
+
+### Step 4 — Changepoint guard (pure math, no Lambda)
+```
+naffo_detect_changepoint({ product_id: pid })
+```
+Returns: `is_downshift` (bool), `severity` (0–1), `dampening_factor` (≤1).
+- `is_downshift: true` → demand has structurally dropped (lost customer, discontinued line).
+- Apply `dampening_factor` to any forecast result before computing order qty.
+  e.g. `dampening_factor: 0.7` → multiply forecast by 0.7 before ordering.
+- Do NOT skip this for a product showing `direction: DECLINE`.
+
+### Step 5 — Probabilistic forecast (calls Lambda)
+```
+naffo_forecast_demand({ product_ids: [pid], horizon_days: 30,
+    festival_boost, planned_discount, service_level, history_days: 365 })
+```
+Returns: `conservative_estimate` (p10), `expected_estimate` (p50),
+`high_estimate` (p90), `engine`, `confidence_tier`, `fallback_reason`.
+
+Engine meaning:
+- `engine: "predict-v1"` → full TimesFM + Chronos + StatsForecast ensemble ✅
+- `engine: "fallback"` + `fallback_reason: "predict_engine_unavailable"` → Lambda down; statistical estimate; say so
+- `engine: "fallback"` + `fallback_reason: "insufficient_history"` → < 3 data points; VERY_LOW confidence
+
+### Step 6 — Correct the uncertainty bands (pure math, no Lambda)
+```
+naffo_aggregate_forecast_range({
+    p10_daily:      result.p10_daily,
+    p50_daily:      result.p50_daily,
+    p90_daily:      result.p90_daily,
+    history_values: your_daily_series   ← from naffo_get_demand_series
+})
+```
+Returns: `corrected_low`, `corrected_high`, `overstatement_pct`.
+- The naive range (`sum(p10_daily)` to `sum(p90_daily)`) overstates uncertainty by 40–80%.
+- Use `corrected_low`..`corrected_high` when presenting the range to the user.
+
+### Step 7 — Cost-optimal order quantity (pure math, no Lambda)
+```
+naffo_newsvendor_order_qty({
+    p10_total: result.conservative_estimate,
+    p50_total: result.expected_estimate,
+    p90_total: result.high_estimate,
+    unit_cost, sell_price, salvage_value,
+    current_stock    ← from naffo_get_stock_on_hand
+})
+```
+Returns: `order_qty`, `critical_ratio`, `basis`, `rationale`.
+- Without `unit_cost`/`sell_price` → falls back to p50 coverage (cite `basis: "fallback_no_costs"`).
+- `critical_ratio > 0.5` → stockout hurts more → order above median.
+- `critical_ratio < 0.5` → overstock hurts more → order below median.
+
+### Step 8 — Apply business guardrails (pure math, no Lambda)
+```
+naffo_harden_order_decision({
+    initial_order_qty,
+    expected_demand: p50_total,
+    low_demand:      p10_total,
+    high_demand:     p90_total,
+    current_stock,
+    unit_price:      sell_price,
+    moq:             product.minOrderQuantity ?? 1,
+    lead_time_days:  product.leadTimeDays ?? 7,  // 7 days is the default fallback — use product master value when available
+    data_age_days:   result.data_freshness_days,
+    horizon_days:    30,
+})
+```
+Returns: `final_order_qty`, `decision_status`, `urgency`, `guardrails[]`,
+`approval_required`, `notify_manager`, `order_band` (floor/expected/high).
+
+**Always use `final_order_qty` — not the raw newsvendor `order_qty`.**
+
+| decision_status | Meaning |
+|---|---|
+| `order_recommended` | Normal order — proceed |
+| `do_not_order_overstock` | Stock already covers high demand — do not order |
+| `capped_for_uncertainty` | Uncertain data — capped to high-case need |
+| `approval_recommended` | MOQ creates overstock — route to manager |
+
+| urgency | Action |
+|---|---|
+| `URGENT` | Stockout before replenishment — present immediately |
+| `NORMAL` | Standard priority |
+
+Guardrail flags to surface explicitly:
+- `stock_may_run_out_before_replenishment` → 🚨 urgent
+- `moq_may_create_overstock` → ⚠️ needs approval
+- `current_stock_covers_high_case` → 🚫 do not order
+- `uncertainty_cap_to_high_case` → ⚠️ capped
+
+### Step 9 — Present all three scenarios (pure math, no Lambda)
+```
+naffo_forecast_scenarios({
+    p10_total, p50_total, p90_total,
+    current_stock, unit_price, moq, lead_time_days,
+    horizon_days: 30,
+})
+```
+Returns: `scenarios[LOW, EXPECTED, HIGH]` each with `qty_recommended`, `order_value`,
+`stockout_risk`, `approval_required`.
+
+**Always show all three.** Let the owner choose based on their cash flow and risk appetite.
+- LOW (p10) → conservative/safe — lower cost, accepts some stockout risk
+- EXPECTED (p50) → balanced best estimate
+- HIGH (p90) → aggressive — avoids stockout, higher cost
+
+---
+
+## Business intelligence signals (run weekly)
+
+```
+naffo_get_business_intel({ lookback_days: 90, top_n: 10 })
+```
+
+Returns three modules:
+1. **Customer churn risk** — customers who have gone silent (days_inactive).
+   - `churn_risk > 0.70` → "Assign sales visit immediately"
+   - `churn_risk 0.40–0.70` → "Monitor — moderate risk"
+2. **SKU wastage risk** — products with high demand volatility + excess stock (over-ordered).
+   - `wastage_risk > 0.60` → "Reduce next order by X%"
+   - `days_of_cover > 90` → "Overstock — hold before reordering"
+3. **Supplier delivery risk** — vendors with overdue purchase invoices (payment → delivery risk).
+   - `escalation: HIGH` → "Escalate to management"
+   - `escalation: MEDIUM` → "Follow up for payment commitment"
+
+Always run `naffo_detect_anomalies` alongside for statistical outliers.
+
+---
+
+## Custom optimization templates (CP-SAT, calls Lambda)
+
+For business problems not covered by the standard 8 templates:
+
+### Shift scheduling
+```
+naffo_optimize_custom({
+    template: "shift_scheduling",
+    data: {
+        shifts:    [{ id: "S1", required: 2, skill: "DRIVER" }],
+        employees: [{ id: "E1", available_shifts: ["S1"], skills: ["DRIVER"], cost: 450 }]
+    }
+})
+```
+→ Assigns employees to shifts minimizing total cost while meeting coverage requirements.
+
+### Delivery routing
+```
+naffo_optimize_custom({
+    template: "delivery_routing",
+    data: {
+        orders: [{ id: "O1", distances: { "V1": 12, "V2": 8 } }],
+        slots:  [{ id: "V1", capacity: 3 }, { id: "V2", capacity: 5 }]
+    }
+})
+```
+→ Assigns orders to vehicles/time-slots minimizing total distance, respecting capacity.
+
+Both templates return `OPTIMAL / FEASIBLE / INFEASIBLE / ERROR` — same rules as `naffo_optimize_plan`.
+
+---
+
+## Confidence & fallback rules (complete reference)
+
+| Condition | What to say |
+|---|---|
+| `confidence_tier: HIGH` | Present numbers directly |
+| `confidence_tier: MEDIUM` | "Reasonable estimate" |
+| `confidence_tier: LOW` | "⚠️ Statistical estimate only — verify before ordering." |
+| `confidence_tier: VERY_LOW` | "⚠️ Rough estimate only. Do not use for large orders." |
+| `fallback_reason: "insufficient_history"` | "< 3 data points — very rough estimate." |
+| `fallback_reason: "predict_engine_unavailable"` | "AI engine down — statistical estimate only." |
+| `is_downshift: true` | "Demand has structurally dropped. Forecast dampened by [N]%." |
+| `demand_pattern: VOLATILE` | "High demand variance — low-confidence forecast." |
+| `demand_pattern: FESTIVAL_DRIVEN` | "Festival-driven demand — check the festival calendar." |
+| `urgency: URGENT` | "🚨 Stockout within [N] days — order immediately." |
+| `approval_required: true` | "🔒 Order value exceeds threshold — needs manager approval before placing." |
+| `INFEASIBLE` | "❌ Constraints conflict — [state conflict_hints exactly]." |
+| `data_points < 15` | "⚠️ Thin data — LOW confidence." *(tool-defined threshold)* |
+| `freshness_days > 30` | "⚠️ Last sale [N] days ago. Verify before ordering." *(tool-defined threshold)* |

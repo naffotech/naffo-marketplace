@@ -4,72 +4,14 @@
     "name": "Naffo Tech",
     "url": "https://github.com/naffotech"
   },
-  "metadata": {
-    "description": "Official Claude Code plugins and skills for the Naffo ERP platform — dairy procurement, accounting, sales, inventory, demand forecasting, production planning, optimization, and business analytics.",
-    "version": "1.4.0"
-  },
-  "skills": [
-    {
-      "name": "naffo-erp-guide",
-      "source": "./skills/naffo-erp-guide",
-      "description": "Core ERP guide — correct tool usage, required fields, party/product resolution, dairy procurement lifecycle, financial report selection, safety rules.",
-      "version": "1.4.0"
-    },
-    {
-      "name": "naffo-management",
-      "source": "./skills/naffo-management",
-      "description": "Day-to-day operations — invoices, payments, receipts, stock checks, dairy procurement cycle, CRM, tasks, financial reports.",
-      "version": "1.4.0"
-    },
-    {
-      "name": "naffo-optimization",
-      "source": "./skills/naffo-optimization",
-      "description": "Forward-looking planning — demand forecasting, production planning, inventory health, milk procurement optimization, cash flow, anomaly detection.",
-      "version": "1.4.0"
-    },
-    {
-      "name": "month-end-close",
-      "source": "./skills/analytics/month-end-close",
-      "description": "Structured month-end bookkeeping close — reconcile transactions, GST check, trial balance, anomaly scan, bank reconciliation.",
-      "version": "1.4.0"
-    },
-    {
-      "name": "monthly-digest",
-      "source": "./skills/analytics/monthly-digest",
-      "description": "Monthly financial snapshot — sales vs last month, top customers, expense breakdown, anomaly alerts, one recommended action.",
-      "version": "1.4.0"
-    },
-    {
-      "name": "client-profitability",
-      "source": "./skills/analytics/client-profitability",
-      "description": "Revenue, outstanding balances, and payment behavior per customer — ranks customers, flags slow payers and concentration risk.",
-      "version": "1.4.0"
-    },
-    {
-      "name": "revenue-concentration",
-      "source": "./skills/analytics/revenue-concentration",
-      "description": "Customer concentration risk — revenue share per client, HHI score, and diversification recommendations.",
-      "version": "1.4.0"
-    },
-    {
-      "name": "seasonal-patterns",
-      "source": "./skills/analytics/seasonal-patterns",
-      "description": "Monthly revenue and expense seasonality — seasonal index, peak/trough months, cash planning recommendations for dairy and food businesses.",
-      "version": "1.4.0"
-    },
-    {
-      "name": "runway-calculator",
-      "source": "./skills/analytics/runway-calculator",
-      "description": "Cash runway — months of operation at current burn rate, three scenarios (current / lean / growth), traffic-light status.",
-      "version": "1.4.0"
-    }
-  ],
+  "description": "Official Claude Code plugins and skills for the Naffo ERP platform — dairy procurement, accounting, sales, inventory, demand forecasting, production planning, optimization, business analytics, and India GST compliance.",
+  "version": "1.6.0",
   "plugins": [
     {
       "name": "naffo",
       "source": "./plugins/naffo",
-      "description": "Work with Naffo ERP from Claude Code — operational management (invoices, payments, stock, dairy, CRM, reports) and business planning (demand forecasting, production planning, inventory optimization, stock transfers).",
-      "version": "1.4.0",
+      "description": "Work with Naffo ERP from Claude Code — operational management (invoices, payments, stock, dairy, CRM, reports), business planning (demand forecasting, production planning, inventory optimization, stock transfers), six analytics skills (month-end close, monthly digest, client profitability, revenue concentration, seasonal patterns, cash runway), and an India GST layer (GSTR mapping, ITC reconciliation, April–March FY).",
+      "version": "1.6.0",
       "author": {
         "name": "Naffo Tech"
       },

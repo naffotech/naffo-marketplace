@@ -428,7 +428,31 @@ Next step: [what to do]
 
 ## Complete forecast-to-order decision chain
 
-For a single product, follow these steps in order. Never skip.
+For a single product, follow these steps in order. Steps 1, 5, and the stock/supply
+reads are the **required backbone** — never skip them. Steps marked **(gated)** call
+refinement tools that older Naffo deployments may not expose; when one is missing,
+apply the fallback in the table below, say which refinement was unavailable, and
+carry on. Never fabricate a gated tool's output.
+
+| Gated step | Tool | Fallback when the tool is missing |
+|---|---|---|
+| 2 | `naffo_get_demand_features` | Read the pattern off `naffo_get_demand_series` (gaps, spread, recent vs prior mean); no `confidence_boost` |
+| 3 | `naffo_get_demand_trend` | Compare period means from `naffo_get_demand_series` and label the direction yourself |
+| 4 | `naffo_detect_changepoint` | Ask the user directly: "Have you lost a customer or discontinued a line recently?" Apply no dampening without an answer |
+| 6 | `naffo_aggregate_forecast_range` | Present the naive `p10_total`..`p90_total` and state that the range overstates uncertainty |
+| 7 | `naffo_newsvendor_order_qty` | Cover to `p50_total − stock_on_hand − pending_supply`, and say the cost-optimal quantity wasn't computed |
+| 8 | `naffo_harden_order_decision` | Apply MOQ and lead-time checks manually from `naffo_get_product_forecast_context`; flag that guardrails weren't machine-checked |
+| 9 | `naffo_forecast_scenarios` | Build LOW/EXPECTED/HIGH by hand from p10/p50/p90 minus stock, without approval flags |
+
+Check availability once, up front, rather than discovering it mid-chain:
+```
+naffo_describe_tools({ names: [
+  "naffo_get_demand_features", "naffo_get_demand_trend", "naffo_detect_changepoint",
+  "naffo_aggregate_forecast_range", "naffo_newsvendor_order_qty",
+  "naffo_harden_order_decision", "naffo_forecast_scenarios"
+]})
+```
+Anything returned in `missing` is not on this deployment — take its fallback.
 
 ### Step 1 — Data quality gate
 ```

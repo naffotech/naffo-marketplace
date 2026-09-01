@@ -16,16 +16,22 @@ after connecting the Naffo MCP server in Claude Code.
 
 ### 2. Connect MCP
 
-Get your connection details from Naffo → Settings → Integrations → MCP.
+The plugin bundles the server. To register it manually, or for a non-plugin
+client:
 
 ```
-claude mcp add naffo --transport http <your-mcp-url>
+claude mcp add naffo --transport http https://naffo.tech/api/mcp
 ```
 
-Or if using the bearer token form:
+It's a shared OAuth 2.1 endpoint — no token to paste. Claude Code opens the
+browser to sign you in and you approve the `read` / `write` / `destructive`
+scopes. Use `/mcp` to check status or re-authenticate.
+
+To sanity-check the endpoint without any auth (catalog discovery works
+unauthenticated, tool calls do not):
+
 ```
-claude mcp add naffo --transport http https://naffo.tech/api/mcp \
-  --header "Authorization: Bearer <your-token>"
+curl -s https://naffo.tech/.well-known/oauth-protected-resource
 ```
 
 ### 3. Verify

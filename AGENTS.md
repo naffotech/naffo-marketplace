@@ -17,17 +17,23 @@ npx skills add naffotech/naffo-marketplace
 
 ## Connect your MCP server
 
-1. Go to naffo.tech → Settings → Integrations → MCP
-2. Copy your personal MCP server URL and transport type
-3. Add it to your agent's MCP configuration:
+Naffo's MCP endpoint is a single shared OAuth 2.1 resource — there is no per-user
+URL and no token to paste. Clients discover the authorization server from
+`https://naffo.tech/.well-known/oauth-protected-resource` and sign the user in
+through the browser (PKCE, dynamic client registration). Scopes: `read`, `write`,
+`destructive`.
 
 ```bash
-# Claude Code
-claude mcp add naffo --transport http <your-mcp-url>
+# Claude Code (the naffo plugin already bundles this server)
+claude mcp add naffo --transport http https://naffo.tech/api/mcp
 
 # Any MCP-compatible agent
-# Add { "naffo": { "type": "http", "url": "<your-mcp-url>" } } to mcp config
+# Add { "naffo": { "type": "http", "url": "https://naffo.tech/api/mcp" } } to mcp config
 ```
+
+Unauthenticated `tools/list` works for catalog discovery; every tool call requires
+a token. Each tool declares its own `requiredScope` (`read` / `write` /
+`destructive`) and `accessPolicy`.
 
 ## Available skills
 
@@ -76,6 +82,17 @@ Business intelligence on top of Naffo ERP data (adapted from openaccountant/skil
 - `revenue-concentration` — customer HHI score and diversification targets
 - `seasonal-patterns` — monthly revenue index, peak/trough detection (dairy/food focused)
 - `runway-calculator` — cash runway, burn rate, three-scenario analysis
+
+### India layer (`skills/regional/india-gst/SKILL.md`)
+Loads only when `naffo_get_my_profile` returns a GSTIN — the core skills stay
+country-neutral.
+- GST return mapping: GSTR-1 (outward), GSTR-2B (ITC), GSTR-3B, GSTR-9, CMP-08
+- CGST + SGST vs IGST from place of supply; counterparty state from the GSTIN prefix
+- ITC reconciliation buckets: in both / in Naffo only / in GSTR-2B only
+- Post-GST-2.0 slabs (0/5/18/40) — read from the item master, never assumed
+- April–March financial year resolution; `GST_FILED` invoices are amendments, not edits
+- Boundaries: no IRN, e-way bill, or income-tax TDS tools exist — route to the portal/CA
+- Indian formatting (lakh/crore) and festival/wedding/harvest seasonality
 
 ## Safety rules (all agents must follow)
 

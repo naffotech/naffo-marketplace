@@ -1,0 +1,23 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Manifests, versions, skill frontmatter, command tool lists
+        run: node scripts/validate-repo.mjs
+
+      - name: Plugin skills mirror is in sync with skills/
+        run: node scripts/sync-skills.mjs --check

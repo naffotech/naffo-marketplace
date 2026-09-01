@@ -8,6 +8,8 @@ Load the skills in this repository before answering any Naffo question.
 - `skills/naffo-erp-guide/SKILL.md` — always load this first
 - `skills/naffo-management/SKILL.md` — for operational/transactional tasks
 - `skills/naffo-optimization/SKILL.md` — for planning/forecasting tasks
+- `skills/regional/india-gst/SKILL.md` — load additionally when the org profile
+  has a GSTIN, or for any GST / ITC / e-way bill / HSN / Indian-FY question
 
 ## Install these skills
 

@@ -22,6 +22,7 @@ Load these files for domain context:
 | `skills/naffo-erp-guide/SKILL.md` | Any Naffo ERP task — load always |
 | `skills/naffo-management/SKILL.md` | Recording transactions, checking data |
 | `skills/naffo-optimization/SKILL.md` | Forecasting, planning, anomaly detection |
+| `skills/regional/india-gst/SKILL.md` | GST, ITC, e-way bill, HSN, Indian FY (org has a GSTIN) |
 
 ## Install
 
