@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentprotocol.ai/schemas/agents.json/v1",
   "name": "naffo-marketplace",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, inventory optimization, business intelligence, and complete forecast-to-order decision chain.",
   "publisher": {
     "name": "Naffo Tech",
@@ -253,7 +253,7 @@
       "note": "Single shared endpoint. No per-user URL and no token in the URL — the client discovers the authorization server and signs the user in through the browser. Unauthenticated tools/list works for catalog discovery; every tool call needs a token."
     },
     "tool_prefix": "naffo_",
-    "tool_count": 466
+    "tool_count": 478
   },
   "safety": [
     "Never invent IDs, amounts, or dates — always resolve via read tools first.",

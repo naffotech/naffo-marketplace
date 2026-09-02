@@ -5,13 +5,13 @@
     "url": "https://github.com/naffotech"
   },
   "description": "Official Claude Code plugins and skills for the Naffo ERP platform — dairy procurement, accounting, sales, inventory, demand forecasting, production planning, optimization, business analytics, and India GST compliance.",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "plugins": [
     {
       "name": "naffo",
       "source": "./plugins/naffo",
       "description": "Work with Naffo ERP from Claude Code — operational management (invoices, payments, stock, dairy, CRM, reports), business planning (demand forecasting, production planning, inventory optimization, stock transfers), six analytics skills (month-end close, monthly digest, client profitability, revenue concentration, seasonal patterns, cash runway), and an India GST layer (GSTR mapping, ITC reconciliation, April–March FY).",
-      "version": "1.6.0",
+      "version": "1.7.0",
       "author": {
         "name": "Naffo Tech"
       },
