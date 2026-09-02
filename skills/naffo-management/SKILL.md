@@ -107,12 +107,12 @@ naffo_get_cash_flow_summary    → operating/financing breakdown + closing bank 
 naffo_get_gstr1_summary        → fromDate, toDate  (India GST — skip if not applicable)
 ```
 
-> **(gated)** `naffo_get_purchase_report`, `naffo_get_payment_summary`, and
-> `naffo_get_cash_flow_summary` are newer aggregates that an older deployment may
-> not expose (see the capability gate in `naffo-erp-guide`). Fallbacks that always
-> work: aggregate `naffo_list_purchase_invoices` yourself; use
-> `naffo_list_receipts` + `naffo_list_payments`; use `naffo_get_bank_ledger` plus
-> `naffo_get_day_book`. Say you used the raw registers instead of the summary.
+> `naffo_get_purchase_report`, `naffo_get_payment_summary`, and
+> `naffo_get_cash_flow_summary` are aggregates — live on naffo.tech. If a
+> self-hosted deployment lacks them, these fallbacks always work: aggregate
+> `naffo_list_purchase_invoices` yourself; use `naffo_list_receipts` +
+> `naffo_list_payments`; use `naffo_get_bank_ledger` plus `naffo_get_day_book`.
+> Say when you used the raw registers instead of the summary.
 
 ---
 

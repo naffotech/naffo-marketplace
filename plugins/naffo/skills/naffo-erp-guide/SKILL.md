@@ -68,13 +68,15 @@ deployment may run an older server build that doesn't expose every tool named
 here. `naffo_describe_tools` returns unknown names in its `missing` array and
 never invents a schema.
 
-So before you rely on a tool that isn't part of the core CRUD set — anything in a
-step marked **(gated)** in `naffo-optimization`, for example — either let
+So before you rely on a tool that isn't part of the core CRUD set, either let
 `naffo_navigate` hand you the tool, or confirm it with `naffo_describe_tools`.
+naffo.tech serves the full catalogue these skills document; a self-hosted or
+older deployment may not.
 
 If a tool is missing:
 1. Say plainly which capability is unavailable on this deployment.
-2. Use the documented fallback for that step, if the skill defines one.
+2. Use the documented fallback for that step, if the skill defines one — the
+   forecast-to-order chain in `naffo-optimization` lists one per step.
 3. Never substitute a similarly-named tool, and never fabricate the output the
    missing tool would have produced.
 
