@@ -13,6 +13,10 @@ The `naffo` plugin already ships the MCP server, so there is nothing to copy or
 paste. Authentication is OAuth — you sign in to your own Naffo account in the
 browser and the token never appears in a config file.
 
+**Installing the plugin does not sign you in.** Approving access is a separate,
+one-time step — this is the step people miss, and it produces the error
+"this connector requires authentication".
+
 1. Install the plugin (`/plugin install naffo`). The bundled MCP server points at
    `https://naffo.tech/api/mcp`.
 2. On first use Claude Code opens your browser to sign in to Naffo and asks you to

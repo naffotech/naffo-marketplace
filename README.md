@@ -19,6 +19,16 @@ Claude Code signs you in to `https://naffo.tech/api/mcp` through your browser
 scopes for your Naffo account. Run `/mcp` any time to check the connection or
 re-authenticate.
 
+**Installing the plugin does not sign you in.** Approving access is a separate
+one-time step, and it's the one people miss:
+
+- **Claude Code:** run `/mcp` → `naffo` → **Authenticate** → approve in the browser.
+- **claude.ai (web / mobile / desktop):** Settings → Connectors → Naffo →
+  **Connect** → approve in the browser.
+
+If a tool ever answers "this connector requires authentication", that's all this
+is — do the step above once. Full walkthrough: <https://naffo.tech/connect>
+
 Verify:
 
 ```

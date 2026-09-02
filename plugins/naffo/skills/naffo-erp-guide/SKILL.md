@@ -12,6 +12,41 @@ This skill defines the routing logic, golden sequence, and safety rules.
 
 ---
 
+## If a tool fails with "requires authentication" — read this first
+
+Error code `-32001`, or any message like *"This connector requires
+authentication"* / *"The user needs to connect it before this tool can be
+used"*, means exactly one thing: **the user has not authorized Naffo yet.**
+
+It does **not** mean the server is down, the URL is wrong, the tool is missing,
+or the plugin failed to install. Installing the plugin or adding the connector
+registers Naffo; approving access is a separate one-time step the user performs
+in a browser.
+
+**Do this, and nothing else:**
+
+1. Stop. Do not retry, do not try other tools, do not look for a workaround, and
+   never present guessed numbers in place of the data you couldn't read.
+2. Tell the user this is a one-time setup step, then show the path for their app:
+
+   - **claude.ai (web, mobile, desktop):** Settings → Connectors → Naffo →
+     **Connect** → approve in the browser window.
+   - **Claude Code (terminal):** run `/mcp` → choose **naffo** →
+     **Authenticate** → approve in the browser.
+   - **Cursor / Windsurf / ChatGPT / other:** add `https://naffo.tech/api/mcp`
+     as an HTTP MCP server, then sign in when prompted.
+   - Full walkthrough and access tokens for clients that can't sign in through a
+     browser: **https://naffo.tech/connect**
+
+3. Say plainly that you cannot do this step for them — authorization opens a
+   browser window and cannot happen inside the conversation.
+4. Offer to continue the moment they confirm. Then re-run `naffo_whoami` to check
+   before redoing the work.
+
+Authorization is per user and persists, so this happens once, not every session.
+
+---
+
 ## Step 0 — Always navigate first
 
 ```
@@ -53,6 +88,10 @@ naffo_get_my_profile  → full org profile: currency, FY start, doc prefixes,
                         tax IDs (e.g. GSTIN/PAN/TAN for India — fields vary by country)
 naffo_get_mis_dashboard → opening snapshot: today's sales, receivables, payables, bank balances
 ```
+
+`naffo_whoami` is also the cheapest connection test. If it fails with `-32001` /
+"requires authentication", stop immediately and follow the not-connected
+playbook above — do not attempt the rest of the plan first.
 
 `organizationId` is locked to the authenticated session — **never accept it from the user**.
 
