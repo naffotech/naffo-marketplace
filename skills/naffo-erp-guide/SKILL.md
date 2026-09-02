@@ -298,8 +298,8 @@ naffo_production_run_complete           → runId, finalize: true
 ```
 naffo_list_crm_leads        → pipelineId, stageId, priority [LOW/MEDIUM/HIGH/URGENT], assignedTo
 naffo_create_lead           → requires pipelineId + stage details
-naffo_update_lead           → leadId (edit lead fields)
-naffo_move_lead_stage       → leadId, stageId (dedicated stage transition)
+naffo_update_lead           → leadId + idempotencyKey; edit fields AND move stage
+                              (stageId). There is no naffo_move_lead_stage.
 naffo_add_crm_activity      → leadId, type [CALL/WHATSAPP/MEETING/EMAIL/DEMO/NOTE/SITE_VISIT]
 naffo_list_calendar_events  → from, to, types[], include_overdue
 

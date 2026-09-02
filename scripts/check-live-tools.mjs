@@ -21,6 +21,19 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const urlFlag = process.argv.indexOf('--url');
 const endpoint = urlFlag !== -1 ? process.argv[urlFlag + 1] : 'https://naffo.tech/api/mcp';
 
+/**
+ * Tool names the skills mention *in order to say they do not exist*. Agents
+ * invent these otherwise, so the negative mention earns its place — but it must
+ * not be counted as a reference. If one of these ever shows up in a live
+ * catalog, the skill note is stale and this script says so.
+ */
+const KNOWN_ABSENT = new Map([
+  [
+    'naffo_move_lead_stage',
+    'never shipped; replaced by naffo_update_lead({ leadId, stageId }) — the skills document that explicitly',
+  ],
+]);
+
 async function rpc(method, params) {
   const res = await fetch(endpoint, {
     method: 'POST',
@@ -87,8 +100,22 @@ console.log(`endpoint : ${endpoint}`);
 console.log(`live     : ${live.size} tools exposed`);
 console.log(`referenced: ${refs.size} distinct tool names in this repo`);
 
-const missing = [...refs.keys()].filter((name) => !live.has(name)).sort();
+// A documented-absent name that turns up live means the skill note is now wrong.
+const staleNotes = [...KNOWN_ABSENT.keys()].filter((name) => live.has(name));
+if (staleNotes.length) {
+  console.warn(`\n⚠ ${staleNotes.length} tool(s) documented as non-existent are now live:`);
+  for (const name of staleNotes) console.warn(`  ${name} — drop the "does not exist" note from the skills`);
+}
+
+const missing = [...refs.keys()]
+  .filter((name) => !live.has(name) && !KNOWN_ABSENT.has(name))
+  .sort();
 const unused = [...live.keys()].filter((name) => !refs.has(name)).sort();
+
+if (KNOWN_ABSENT.size) {
+  console.log(`\n${KNOWN_ABSENT.size} name(s) intentionally documented as absent (not counted):`);
+  for (const [name, why] of KNOWN_ABSENT) console.log(`  ${name} — ${why}`);
+}
 
 if (unused.length) {
   console.log(`\n${unused.length} live tools not mentioned by any skill (informational):`);
