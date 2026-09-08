@@ -1,7 +1,7 @@
 ---
 name: naffo-erp-guide
-description: Use this skill when working with the Naffo ERP platform — creating sales or purchase invoices, recording payments/receipts, checking stock, tax summaries, module-specific workflows (dairy, manufacturing, etc.), CRM leads, and task management. Guides correct tool usage, required fields, and validation rules.
-when_to_use: Naffo ERP, create invoice, record payment, check stock, tax report, dairy procurement, CRM lead, task, who am I in Naffo, connect to Naffo, Naffo tool usage, sale invoice, purchase invoice, bank account, party outstanding, trial balance, balance sheet, purchase order, goods receipt, batch tracking, warehouse, quotation, delivery challan.
+description: Use this skill when working with the Naffo ERP platform — creating sales or purchase invoices, recording payments/receipts, checking stock, tax summaries, module-specific workflows (dairy, manufacturing, etc.), CRM leads, task management, and company priorities / feedback loops. Guides correct tool usage, required fields, and validation rules.
+when_to_use: Naffo ERP, create invoice, record payment, check stock, tax report, dairy procurement, CRM lead, task, who am I in Naffo, connect to Naffo, Naffo tool usage, sale invoice, purchase invoice, bank account, party outstanding, trial balance, balance sheet, purchase order, goods receipt, batch tracking, warehouse, quotation, delivery challan, company priorities, feedback loop, weekly reset.
 ---
 
 # Naffo ERP Guide
@@ -347,6 +347,12 @@ naffo_list_calendar_events  → from, to, types[], include_overdue
 naffo_list_tasks            → projectId, status [TODO/IN_PROGRESS/REVIEW/DONE], priority
 naffo_list_projects
 naffo_create_project
+
+# Company priorities (Now/Next/Later) — distinct from task priority
+naffo_list_priorities / naffo_get_priority / naffo_create_priority /
+naffo_update_priority / naffo_move_priority
+naffo_list_feedback_loops / naffo_create_feedback_loop / naffo_update_feedback_loop
+# Cap: max 3 ACTIVE in NOW. Weekly reset → offTarget loops + actionHints next actions.
 ```
 
 ---

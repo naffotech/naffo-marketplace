@@ -1,8 +1,8 @@
 {
   "$schema": "https://agentprotocol.ai/schemas/agents.json/v1",
   "name": "naffo-marketplace",
-  "version": "1.7.0",
-  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, inventory optimization, business intelligence, and complete forecast-to-order decision chain.",
+  "version": "1.8.0",
+  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, inventory optimization, business intelligence, and complete forecast-to-order decision chain, company priorities, and feedback loops.",
   "publisher": {
     "name": "Naffo Tech",
     "url": "https://naffo.tech",
@@ -63,7 +63,10 @@
         "cash flow",
         "payment summary",
         "how much did we pay",
-        "operating cash flow"
+        "operating cash flow",
+        "company priorities",
+        "feedback loop",
+        "weekly reset"
       ]
     },
     {
@@ -237,6 +240,22 @@
         "cash reserves",
         "business survival"
       ]
+    },
+    {
+      "name": "company-priorities",
+      "file": "skills/company-priorities/SKILL.md",
+      "description": "Company Now/Next/Later priorities, feedback loops, and the weekly reset ritual with next-action highlighting via Naffo MCP tools.",
+      "triggers": [
+        "company priorities",
+        "NOW NEXT LATER",
+        "feedback loop",
+        "weekly reset",
+        "what should we focus on",
+        "off track",
+        "next action",
+        "company focus",
+        "priority board"
+      ]
     }
   ],
   "mcp": {
@@ -249,7 +268,11 @@
       "authorization_server_metadata": "https://naffo.tech/.well-known/oauth-authorization-server",
       "dynamic_client_registration": true,
       "pkce": "S256",
-      "scopes": ["read", "write", "destructive"],
+      "scopes": [
+        "read",
+        "write",
+        "destructive"
+      ],
       "note": "Single shared endpoint. No per-user URL and no token in the URL — the client discovers the authorization server and signs the user in through the browser. Unauthenticated tools/list works for catalog discovery; every tool call needs a token."
     },
     "tool_prefix": "naffo_",
