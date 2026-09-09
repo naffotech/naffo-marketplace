@@ -1,7 +1,7 @@
 ---
 name: naffo-management
-description: Day-to-day operations for the Naffo ERP — invoices, parties, stock, batches, warehouse transfers, payments, receipts, module-specific workflows (dairy procurement, manufacturing, etc.), CRM follow-ups, financial reports, and task management. Use this skill when the user asks about something that has already happened or needs to be recorded right now.
-when_to_use: Create invoice, record payment, check stock, who owes money, party balance, outstanding, receivables, record receipt, dairy procurement, gate pass, QC, weighbridge, settlement, sales report, purchase invoice, bank balance, tax report, P&L, balance sheet, trial balance, CRM lead, follow up, task, overdue invoices, ledger, day book, expenses, purchase order, GRN, batch expiry, stock transfer, warehouse, delivery challan, quotation, manufacturing batch.
+description: Day-to-day operations for the Naffo ERP — invoices, parties, stock, batches, warehouse transfers, payments, receipts, module-specific workflows (dairy procurement, manufacturing, etc.), CRM follow-ups, financial reports, task management, and company priorities / feedback loops. Use this skill when the user asks about something that has already happened or needs to be recorded right now.
+when_to_use: Create invoice, record payment, check stock, who owes money, party balance, outstanding, receivables, record receipt, dairy procurement, gate pass, QC, weighbridge, settlement, sales report, purchase invoice, bank balance, tax report, P&L, balance sheet, trial balance, CRM lead, follow up, task, overdue invoices, ledger, day book, expenses, purchase order, GRN, batch expiry, stock transfer, warehouse, delivery challan, quotation, manufacturing batch, company priorities, feedback loop, weekly reset.
 ---
 
 # Naffo Management
@@ -350,6 +350,13 @@ naffo_list_calendar_events → from, to, types[], include_overdue
 naffo_list_tasks        → projectId, status [TODO/IN_PROGRESS/REVIEW/DONE], priority
 naffo_list_projects
 naffo_create_project
+
+# Company priorities (Now/Next/Later) — not task priority
+naffo_list_priorities       → horizon [NOW/NEXT/LATER], status, includeDone, taskId, leadId
+naffo_get_priority / naffo_create_priority / naffo_update_priority / naffo_move_priority
+naffo_list_feedback_loops   → priorityId, status [ON_TRACK/WATCH/OFF], offTarget
+naffo_create_feedback_loop / naffo_update_feedback_loop
+# Weekly reset: list priorities + offTarget loops, highlight actionHints, then move NOW/NEXT with user confirm
 ```
 
 ---
