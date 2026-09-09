@@ -53,6 +53,7 @@ Who am I in Naffo?
 | Skill: **seasonal-patterns** | Monthly revenue seasonality — peak/trough index, cash planning |
 | Skill: **runway-calculator** | Cash runway — burn rate, months of operation, three scenarios |
 | Skill: **company-priorities** | Now/Next/Later company priorities, feedback loops, weekly reset + next-action highlighting |
+| Skill: **process-operations** | Process templates, instances, stage advances, handoff/SLA aging (my ball, over SLA) + next-action highlighting |
 | Skill: **india-gst** | India layer — GSTR-1/2B/3B mapping, ITC reconciliation, CGST-SGST vs IGST, HSN/GSTIN reading, e-invoice & e-way bill boundaries, April–March FY, lakh/crore formatting |
 | Command: `/naffo-setup` | Quick-start connection guide |
 | Command: `/naffo-forecast` | Demand forecast → cost-optimal order decision (full 12-step chain) |
