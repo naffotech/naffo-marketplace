@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentprotocol.ai/schemas/agents.json/v1",
   "name": "naffo-marketplace",
-  "version": "1.8.0",
+  "version": "1.10.0",
   "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, inventory optimization, business intelligence, and complete forecast-to-order decision chain, company priorities, and feedback loops.",
   "publisher": {
     "name": "Naffo Tech",
@@ -14,6 +14,20 @@
     "mcp": "Add https://naffo.tech/api/mcp as an HTTP MCP server — a shared OAuth 2.1 endpoint, no token to paste"
   },
   "skills": [
+    {
+      "name": "business-memory",
+      "file": "skills/business-memory/SKILL.md",
+      "description": "Recall, save, correct and archive permission-filtered business preferences, decisions and context across conversations.",
+      "triggers": [
+        "remember",
+        "business memory",
+        "business context",
+        "recall",
+        "saved preference",
+        "previous decision",
+        "forget this"
+      ]
+    },
     {
       "name": "naffo-erp-guide",
       "file": "skills/naffo-erp-guide/SKILL.md",
@@ -276,7 +290,7 @@
       "note": "Single shared endpoint. No per-user URL and no token in the URL — the client discovers the authorization server and signs the user in through the browser. Unauthenticated tools/list works for catalog discovery; every tool call needs a token."
     },
     "tool_prefix": "naffo_",
-    "tool_count": 478
+    "tool_discovery": "Use tools/list and naffo_describe_tools; availability depends on deployment, profile and permissions."
   },
   "safety": [
     "Never invent IDs, amounts, or dates — always resolve via read tools first.",

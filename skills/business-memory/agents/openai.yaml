@@ -1,0 +1,4 @@
+interface:
+  display_name: "Business Memory"
+  short_description: "Recall and maintain permission-filtered Naffo context"
+  default_prompt: "Recall relevant Naffo business context and help me save or correct business memory while preserving access permissions."

@@ -7,7 +7,7 @@ when_to_use: Naffo ERP, create invoice, record payment, check stock, tax report,
 # Naffo ERP Guide
 
 Naffo is a full-stack ERP covering sales, purchases, accounting, inventory,
-manufacturing, CRM, and tasks. The MCP server exposes 478 tools.
+manufacturing, CRM, and tasks. Discover the deployment's current tools through MCP.
 This skill defines the routing logic, golden sequence, and safety rules.
 
 ---

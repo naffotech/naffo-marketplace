@@ -39,10 +39,18 @@ Who am I in Naffo?
 
 ## What's inside
 
+Version 1.10 adds permission-filtered business memory and optional TimesFM-3
+evaluation guidance. Server rollout is required before the new tools appear.
+Business Memory access is assigned through Naffo's existing permission settings;
+private notes stay private, and source permissions are rechecked on recall.
+The public TimesFM-3 checkpoint is not licensed for commercial/production use.
+Existing operational forecasting remains the default.
+
 ### Plugin: `naffo`
 
 | Component | What it does |
 |---|---|
+| Skill: **business-memory** | Remember and recall private or administrator-published business context, with source permissions, expiry and versioned corrections |
 | Skill: **naffo-erp-guide** | Core tool usage rules — resolving parties/products before writes, required fields, dairy lifecycle order, report selection, safety rules |
 | Skill: **naffo-management** | Day-to-day operations — invoices, payments, stock checks, dairy procurement, CRM follow-ups, financial reports |
 | Skill: **naffo-optimization** | Demand forecasting, the full forecast-to-order chain, production planning, inventory health, milk procurement optimization, anomaly detection |

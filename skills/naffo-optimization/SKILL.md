@@ -9,6 +9,31 @@ when_to_use: Demand forecast, production plan, what should I produce, how much t
 Handles **forward-looking, analytical, and optimization** questions.
 Always data-driven — every number comes from a tool call.
 
+When saved preferences or constraints could change the plan, discover and use
+`naffo_search_business_memory` first if available (see the business-memory skill).
+Reuse confirmed context instead of asking the same questions again; verify live
+ERP quantities and prices separately.
+
+### Optional TimesFM-3 joint forecasting
+
+`naffo_forecast_multivariate` is a separate capability for 1–16 related products.
+Check availability first. It uses an explicit `from_date`/`as_of_date` window and
+optional aligned `past_only_covariates` and `past_future_covariates`. Future
+covariates include both history and the forecast horizon; never invent future
+observations. Date bins are UTC. Missing invoice days become zero sales, so first
+verify ingestion coverage and at least 14 observed sale days per product.
+
+The public TimesFM-3 weights are non-commercial/non-production. Runs default to
+`evaluation_only: true`; do not use those results to place orders or make commercial
+decisions. Operational use requires separately licensed configuration. If the
+tool is unavailable, use the existing `naffo_forecast_demand` workflow. Never call
+a statistical fallback TimesFM-3 or promise higher accuracy without backtesting.
+
+The result includes daily quantiles, target IDs, model revision and warnings.
+Daily quantile sums are scenario totals, not calibrated total-demand quantiles.
+Confidence is LOW until business-specific evaluation supports stronger claims.
+Apply uncertainty aggregation and order guardrails to operational forecasts.
+
 ---
 
 ## Mental model
