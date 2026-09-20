@@ -39,12 +39,10 @@ Who am I in Naffo?
 
 ## What's inside
 
-Version 1.10 adds permission-filtered business memory and optional TimesFM-3
-evaluation guidance. Server rollout is required before the new tools appear.
-Business Memory access is assigned through Naffo's existing permission settings;
-private notes stay private, and source permissions are rechecked on recall.
-The public TimesFM-3 checkpoint is not licensed for commercial/production use.
-Existing operational forecasting remains the default.
+Version 1.11 adds model-independent joint forecasting, historical accuracy tests,
+and comparison against a simple baseline. Server rollout is required before
+new tools appear. Business memory remains permission-filtered: private notes
+stay private and source permissions are rechecked on recall.
 
 ### Plugin: `naffo`
 
