@@ -1,8 +1,8 @@
 {
   "$schema": "https://agentprotocol.ai/schemas/agents.json/v1",
   "name": "naffo-marketplace",
-  "version": "1.9.0",
-  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, inventory optimization, business intelligence, and complete forecast-to-order decision chain, company priorities, feedback loops, process templates, and handoff/SLA aging.",
+  "version": "1.13.0",
+  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, inventory optimization, business intelligence, and complete forecast-to-order decision chain, company priorities, feedback loops, process templates, and handoff/SLA aging. Includes reusable Forms & Requests, brief analysis and optional quotation/customer/lead/project connections.",
   "publisher": {
     "name": "Naffo Tech",
     "url": "https://naffo.tech",
@@ -292,6 +292,27 @@
         "SLA aging",
         "Lead to Cash",
         "Procure to Pay"
+      ]
+    },
+    {
+      "name": "forms-requests",
+      "file": "skills/forms-requests/SKILL.md",
+      "description": "Reusable customer questionnaires, NPD briefs, request review, evidence-based summaries, clarification and optional quotation/customer/lead/project connections.",
+      "triggers": [
+        "Forms & Requests",
+        "customer requirements form",
+        "customer intake questionnaire",
+        "NPD brief",
+        "product development brief",
+        "publish form template",
+        "review form request",
+        "missing form answers",
+        "request clarification",
+        "assign form reviewer",
+        "quotation from request",
+        "link form to customer",
+        "link form to lead",
+        "link form to project"
       ]
     }
   ],

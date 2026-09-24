@@ -70,8 +70,8 @@ never invents a schema.
 
 So before you rely on a tool that isn't part of the core CRUD set, either let
 `naffo_navigate` hand you the tool, or confirm it with `naffo_describe_tools`.
-naffo.tech serves the full catalogue these skills document; a self-hosted or
-older deployment may not.
+The hosted service and self-hosted deployments can roll out at different times;
+always use the connected server's current catalog as the source of truth.
 
 If a tool is missing:
 1. Say plainly which capability is unavailable on this deployment.
@@ -81,6 +81,18 @@ If a tool is missing:
    missing tool would have produced.
 
 ---
+
+## Forms & Requests routing
+
+For customer questionnaires, NPD briefs, response summaries, review, clarification
+or form-to-quotation work, load the `forms-requests` skill. It covers the 14 Forms
+tools, customer/internal visibility, revision checks and optional connections.
+Forms work independently; ordinary quotations, customers, leads and projects
+never require a form. Check the deployed tool schema before using a Forms handoff:
+`naffo_create_quotation` must accept both `sourceRequestId` and
+`sourceRequestRevision`. Use `naffo_prepare_form_quotation` first, confirm commercial
+details, then create the quotation and link atomically. Never price a quotation
+from the customer's target product cost.
 
 ## Step 1 — Confirm identity
 

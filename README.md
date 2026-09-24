@@ -2,7 +2,7 @@
 
 Official Claude Code plugins and skills for the **Naffo ERP** platform — sales,
 purchases, accounting, inventory, GST, dairy procurement, production planning,
-demand forecasting, inventory optimization, CRM, and task management.
+demand forecasting, inventory optimization, CRM, task management, and customer forms.
 
 ## Install
 
@@ -39,10 +39,12 @@ Who am I in Naffo?
 
 ## What's inside
 
-Version 1.11 adds model-independent joint forecasting, historical accuracy tests,
-and comparison against a simple baseline. Server rollout is required before
-new tools appear. Business memory remains permission-filtered: private notes
-stay private and source permissions are rechecked on recall.
+Version 1.13 adds Forms & Requests: reusable customer questionnaires, evidence-based
+brief summaries, review and clarification workflows, and optional quotation,
+customer, lead and project connections. It includes guidance for all 14 Forms MCP
+tools and the quotation source handoff. Server rollout and appropriate permissions
+are required before these tools appear; installing the skill does not deploy them.
+Forms and existing ERP workflows also work independently, with AI optional.
 
 ### Plugin: `naffo`
 
@@ -51,6 +53,7 @@ stay private and source permissions are rechecked on recall.
 | Skill: **business-memory** | Remember and recall private or administrator-published business context, with source permissions, expiry and versioned corrections |
 | Skill: **naffo-erp-guide** | Core tool usage rules — resolving parties/products before writes, required fields, dairy lifecycle order, report selection, safety rules |
 | Skill: **naffo-management** | Day-to-day operations — invoices, payments, stock checks, dairy procurement, CRM follow-ups, financial reports |
+| Skill: **forms-requests** | Build and publish customer questionnaires, summarize responses, review and request clarification, optionally prepare quotations or connect customers/leads/projects |
 | Skill: **naffo-optimization** | Demand forecasting, the full forecast-to-order chain, production planning, inventory health, milk procurement optimization, anomaly detection |
 | Skill: **month-end-close** | Month-end close checklist — reconcile, tax check, trial balance, anomaly scan, bank reconciliation |
 | Skill: **monthly-digest** | Monthly snapshot — sales vs last month, top customers, expenses, anomaly alerts |
@@ -87,6 +90,28 @@ Example prompts:
 - *"Record a ₹45,000 payment to Raj Packaging"*
 - *"What happened in dairy procurement today?"*
 - *"Show me this month's P&L"*
+
+### `forms-requests` — Customer Briefs & Optional Connections
+
+Open **Forms & Requests** at [naffo.tech/forms](https://naffo.tech/forms).
+Create a blank template or use the Product Development Brief starter, publish,
+create a request, and copy its private customer invitation from the management
+page. Customers save and submit their own responses; staff review them and may
+connect business records. Creating a request does not send a message.
+
+Example prompts:
+
+- *"Create a reusable customer requirements form with contact details, scope, timeline and budget. Keep it standalone and save it as a draft."*
+- *"Show submitted form requests and identify which need clarification."*
+- *"Summarize this request using its field evidence and draft clarification questions without posting them."*
+- *"Prepare a quotation from this request. Show the proposed details and ask me for missing commercial quantities and rates."*
+- *"Connect this request to the existing CRM lead after resolving the lead."*
+
+The assistant returns staff links, never private invitation credentials. Internal
+notes stay separate from customer-visible messages. A target cost in a brief is
+context, never an automatically assigned quotation price. Existing quotations
+continue to work without a form. See [testing scenarios](TESTING.md#test-g--forms--requests)
+for the complete workflow and deployment checks.
 
 ### `naffo-optimization` — Forecasting & Planning
 

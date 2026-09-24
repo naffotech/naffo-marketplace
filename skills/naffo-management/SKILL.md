@@ -82,6 +82,18 @@ naffo_get_sales_order          → orderId
 naffo_get_sales_order_dashboard
 ```
 
+### Customer forms and requirement briefs
+
+Load `forms-requests` for reusable questionnaires, NPD briefs, submitted answers,
+reviewer assignment, missing-information checks or optional business-record links.
+Discover the deployed Forms tools before using them. A standalone quotation needs
+no request. For a requested form-to-quotation handoff, prepare with
+`naffo_prepare_form_quotation`, confirm quantities/rates and commercial details,
+then use `naffo_create_quotation` with both `sourceRequestId` and
+`sourceRequestRevision` supported by its current schema. The server saves the
+quotation and source snapshot together. Customer target cost is not a quoted rate.
+Private reviewer notes must never enter customer messages or quotation notes.
+
 ### Delivery
 ```
 naffo_create_delivery_challan  → vehicleNumber, driverName, dispatchTime, items[]
