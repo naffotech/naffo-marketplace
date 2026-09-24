@@ -55,6 +55,14 @@ Real-time operational workflows.
 - CRM leads, tasks, follow-ups
 - Financial reports (trial balance, balance sheet, P&L day book, GST)
 
+### forms-requests (`skills/forms-requests/SKILL.md`)
+General-purpose customer intake, independent of other ERP modules.
+- Draft and publish reusable forms; create private requests from published versions
+- Summarize field evidence, identify missing answers, assign reviewers and request clarification
+- Keep internal notes separate from customer-visible messages and linked briefs
+- Optionally prepare a quotation or connect a customer, CRM lead or project
+- Check live capabilities; never infer prices from a target cost or expose invitation credentials
+
 ### naffo-optimization (`skills/naffo-optimization/SKILL.md`)
 Forward-looking planning and analytics — now includes the complete forecast-to-order chain:
 - Demand character analysis: rolling stats, lags, YoY growth, India calendar flags, demand pattern (STABLE/TREND/FESTIVAL_DRIVEN/VOLATILE) — `naffo_get_demand_features`
