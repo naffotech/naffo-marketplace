@@ -9,6 +9,74 @@ when_to_use: Demand forecast, production plan, what should I produce, how much t
 Handles **forward-looking, analytical, and optimization** questions.
 Always data-driven — every number comes from a tool call.
 
+When saved preferences or constraints could change the plan, discover and use
+`naffo_search_business_memory` first if available (see the business-memory skill).
+Reuse confirmed context instead of asking the same questions again; verify live
+ERP quantities and prices separately.
+
+### Joint forecasting and historical testing
+
+Discover `naffo_forecast_multivariate` for 1–16 related products. Omit `model`
+to use the configured engine. Resolve product IDs first. Supply an explicit
+`from_date`/`as_of_date` and optional aligned `past_only_covariates` or
+`past_future_covariates`. For a forecast, future drivers cover history plus the
+forecast horizon. Never invent future observations. Date bins are UTC; absent
+invoice days become zero sales. Verify ingestion coverage and at least 14
+observed sale days per product before relying on the forecast.
+
+Use `naffo_backtest_forecast` to check accuracy on withheld sales. Use
+`naffo_compare_forecast_models` to compare the configured commercial engine
+(`chronos2`) with `naive` on identical chronological cutoffs. Evaluation drivers
+cover historical dates only. Set `future_covariates_known_at_cutoff` only when
+those values really were available at each historical forecast date. Realized
+future weather or revised sales plans would make the test misleading.
+
+Report per-product errors and coverage alongside the overall comparison. Zero
+sales can make MAPE, WAPE or MASE undefined; preserve nulls and their reasons.
+A naive baseline predicts products independently and has no uncertainty bands.
+Do not promise better accuracy simply because joint forecasting is available.
+
+Present this as Naffo forecasting; model names belong in technical provenance
+or an explicit model comparison. The response identifies the actual model and
+revision. Daily interval sums are scenario totals, not calibrated total-demand
+intervals. Confidence remains LOW until business-specific evaluation supports
+stronger claims. Apply existing uncertainty and order guardrails before writes.
+If a user explicitly requests evaluation-only output, do not use it to place
+orders. These tools require unrestricted company sales/product access and do
+not bypass business-memory permissions.
+
+### Outlet demand to production plan
+
+For a named retail outlet, first use `naffo_pos_list_outlets` to resolve its
+id. Pass that id as `outlet_id` to `naffo_forecast_multivariate`; this uses
+only that outlet's completed POS sales, not company-wide invoice sales. Do not
+claim an outlet forecast when `outlet_id` was omitted. An outlet forecast still
+needs at least 14 observed sale days for every selected product.
+
+For a production decision, use this sequence after backtesting or clearly
+labelling the forecast as LOW confidence:
+
+1. Inspect outlet stock and near-expiry batches with
+   `naffo_get_outlet_stock_matrix({ outletId, includeExpiring: true })` and
+   `naffo_list_batch_expiry_alerts`.
+2. Save only the reviewed point forecasts with
+   `naffo_save_forecast_for_production`. Pass the exact `forecast_dates` and
+   each product's exact `point` array returned by the forecast, plus a fresh
+   `idempotencyKey`. This stores planning demand only; it creates no inventory,
+   order, work order, or production run.
+3. Call `naffo_get_production_optimization_context` with the saved
+   `demand_forecast_ids`. It returns BOMs, sale prices, material and operating
+   costs, holding costs, capacity, maintenance buffers, stock by location and
+   committed work. Forecast provenance identifies the source outlet when one
+   was used.
+4. Stop if `readiness.ready` is false. Solve only the returned canonical
+   context. Submit a proposal with `naffo_submit_production_plan_result`; that
+   stores a reviewable recommendation and does not start production.
+
+Describe waste as an objective supported by actual expiry, shelf-life, holding
+and material-cost inputs. Do not promise lower waste or higher profit until a
+historical comparison against the current planning method supports it.
+
 ---
 
 ## Mental model
@@ -495,7 +563,7 @@ Returns: `conservative_estimate` (p10), `expected_estimate` (p50),
 `high_estimate` (p90), `engine`, `confidence_tier`, `fallback_reason`.
 
 Engine meaning:
-- `engine: "predict-v1"` → full TimesFM + Chronos + StatsForecast ensemble ✅
+- `engine: "predict-v1"` → forecast backend succeeded; inspect model provenance and engine_tier
 - `engine: "fallback"` + `fallback_reason: "predict_engine_unavailable"` → Lambda down; statistical estimate; say so
 - `engine: "fallback"` + `fallback_reason: "insufficient_history"` → < 3 data points; VERY_LOW confidence
 

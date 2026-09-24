@@ -15,6 +15,20 @@
   },
   "skills": [
     {
+      "name": "business-memory",
+      "file": "skills/business-memory/SKILL.md",
+      "description": "Recall, save, correct and archive permission-filtered business preferences, decisions and context across conversations.",
+      "triggers": [
+        "remember",
+        "business memory",
+        "business context",
+        "recall",
+        "saved preference",
+        "previous decision",
+        "forget this"
+      ]
+    },
+    {
       "name": "naffo-erp-guide",
       "file": "skills/naffo-erp-guide/SKILL.md",
       "description": "Core rules and workflows for the Naffo ERP — correct tool usage, required fields, party/product resolution, golden write sequence, dairy procurement lifecycle, financial report selection, forecasting quick-reference, and safety rules. Load this before any Naffo operation.",
@@ -299,7 +313,7 @@
       "note": "Single shared endpoint. No per-user URL and no token in the URL — the client discovers the authorization server and signs the user in through the browser. Unauthenticated tools/list works for catalog discovery; every tool call needs a token."
     },
     "tool_prefix": "naffo_",
-    "tool_count": 478
+    "tool_discovery": "Use tools/list and naffo_describe_tools; availability depends on deployment, profile and permissions."
   },
   "safety": [
     "Never invent IDs, amounts, or dates — always resolve via read tools first.",

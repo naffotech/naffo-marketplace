@@ -196,11 +196,12 @@ Forecast demand for SMP-500 for the next 30 days
 ```
 
 **Expected behavior:**
-1. `naffo_search_item` → resolves productId
-2. `naffo_get_sales_report({ groupBy: "product" })` → gets 90d sales history
-3. `naffo_get_stock_on_hand` → current inventory
-4. `naffo_list_calendar_events` → festival check for forecast window
-5. Computes avg daily demand, expected total, gap
+1. Resolve product and recall relevant permitted business context if available.
+2. Check forecast readiness and gather current product/supply context.
+3. Inspect demand features and trend; check changepoints for structural decline.
+4. Call `naffo_forecast_demand`, preserving engine, model revision and fallback notices.
+5. Aggregate daily uncertainty, compute an order decision and apply guardrails.
+6. Present scenarios and confidence without treating a heuristic fallback as a model forecast.
 
 **Expected output format:**
 ```
@@ -296,6 +297,22 @@ Create a formal production planning run for next week
 ---
 
 ## Test D — Slash commands
+
+### Memory and TimesFM-3 additions (v1.10)
+
+- Ask to remember a private preference, reopen a conversation, and recall it.
+  Another user and another company must not see the note.
+- Remove a source permission and recall again: no protected text should appear.
+- Test row/amount-scoped access: shared summaries must be withheld; only private
+  notes captured in the same scope may appear.
+- Correct a note using its version; a stale simultaneous edit must fail.
+- Archive a note and confirm it disappears from active recall. Retry the same
+  idempotency key and confirm no duplicate write.
+- Discover `naffo_forecast_multivariate`. With the engine disabled it must return
+  an explicit unavailable result, leaving normal forecasting usable.
+- In an authorized non-commercial evaluation, pass aligned related product data
+  and known covariates. Check target IDs, dates, daily quantile ordering and model
+  provenance. Do not use evaluation output for orders or commercial decisions.
 
 ### D1. `/naffo-setup`
 

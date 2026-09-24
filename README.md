@@ -39,10 +39,16 @@ Who am I in Naffo?
 
 ## What's inside
 
+Version 1.11 adds model-independent joint forecasting, historical accuracy tests,
+and comparison against a simple baseline. Server rollout is required before
+new tools appear. Business memory remains permission-filtered: private notes
+stay private and source permissions are rechecked on recall.
+
 ### Plugin: `naffo`
 
 | Component | What it does |
 |---|---|
+| Skill: **business-memory** | Remember and recall private or administrator-published business context, with source permissions, expiry and versioned corrections |
 | Skill: **naffo-erp-guide** | Core tool usage rules — resolving parties/products before writes, required fields, dairy lifecycle order, report selection, safety rules |
 | Skill: **naffo-management** | Day-to-day operations — invoices, payments, stock checks, dairy procurement, CRM follow-ups, financial reports |
 | Skill: **naffo-optimization** | Demand forecasting, the full forecast-to-order chain, production planning, inventory health, milk procurement optimization, anomaly detection |
