@@ -1,7 +1,7 @@
 ---
 name: naffo-management
-description: Day-to-day operations for the Naffo ERP — invoices, parties, stock, batches, warehouse transfers, payments, receipts, module-specific workflows (dairy procurement, manufacturing, etc.), CRM follow-ups, financial reports, task management, and company priorities / feedback loops. Use this skill when the user asks about something that has already happened or needs to be recorded right now.
-when_to_use: Create invoice, record payment, check stock, who owes money, party balance, outstanding, receivables, record receipt, dairy procurement, gate pass, QC, weighbridge, settlement, sales report, purchase invoice, bank balance, tax report, P&L, balance sheet, trial balance, CRM lead, follow up, task, overdue invoices, ledger, day book, expenses, purchase order, GRN, batch expiry, stock transfer, warehouse, delivery challan, quotation, manufacturing batch, company priorities, feedback loop, weekly reset.
+description: Day-to-day operations for the Naffo ERP — invoices, parties, stock, batches, warehouse transfers, payments, receipts, module-specific workflows (dairy procurement, manufacturing, etc.), CRM follow-ups, financial reports, task management, company priorities / feedback loops, and process templates / SLA aging. Use this skill when the user asks about something that has already happened or needs to be recorded right now.
+when_to_use: Create invoice, record payment, check stock, who owes money, party balance, outstanding, receivables, record receipt, dairy procurement, gate pass, QC, weighbridge, settlement, sales report, purchase invoice, bank balance, tax report, P&L, balance sheet, trial balance, CRM lead, follow up, task, overdue invoices, ledger, day book, expenses, purchase order, GRN, batch expiry, stock transfer, warehouse, delivery challan, quotation, manufacturing batch, company priorities, feedback loop, weekly reset, process templates, process aging, over SLA, my ball, advance process.
 ---
 
 # Naffo Management
@@ -357,6 +357,14 @@ naffo_get_priority / naffo_create_priority / naffo_update_priority / naffo_move_
 naffo_list_feedback_loops   → priorityId, status [ON_TRACK/WATCH/OFF], offTarget
 naffo_create_feedback_loop / naffo_update_feedback_loop
 # Weekly reset: list priorities + offTarget loops, highlight actionHints, then move NOW/NEXT with user confirm
+
+# Process templates + handoff/SLA aging
+naffo_list_process_templates  → status [ACTIVE/ARCHIVED]
+naffo_list_process_instances  → status, templateId, mine
+naffo_get_process_instance    → instanceId
+naffo_advance_process_instance → instanceId, nextOwnerId?, idempotencyKey  (confirm first)
+naffo_list_process_aging      → mine, overSla, bucket [0-2/3-7/8-14/14+], templateId
+# Next actions: OVER SLA → my ball → other active; never advance without user confirm
 ```
 
 ---

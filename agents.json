@@ -1,8 +1,8 @@
 {
   "$schema": "https://agentprotocol.ai/schemas/agents.json/v1",
   "name": "naffo-marketplace",
-  "version": "1.12.0",
-  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, inventory optimization, business intelligence, and complete forecast-to-order decision chain, company priorities, and feedback loops.",
+  "version": "1.9.0",
+  "description": "Official skills and tools for the Naffo ERP platform. Connects to Naffo via MCP to read and write live business data — sales, purchases, accounting, stock, dairy procurement, CRM, demand forecasting, inventory optimization, business intelligence, and complete forecast-to-order decision chain, company priorities, feedback loops, process templates, and handoff/SLA aging.",
   "publisher": {
     "name": "Naffo Tech",
     "url": "https://naffo.tech",
@@ -80,7 +80,12 @@
         "operating cash flow",
         "company priorities",
         "feedback loop",
-        "weekly reset"
+        "weekly reset",
+        "process templates",
+        "process aging",
+        "over SLA",
+        "my ball",
+        "advance process"
       ]
     },
     {
@@ -269,6 +274,24 @@
         "next action",
         "company focus",
         "priority board"
+      ]
+    },
+    {
+      "name": "process-operations",
+      "file": "skills/process-operations/SKILL.md",
+      "description": "Process templates, instances, stage advances with confirmation, and handoff/SLA aging (my ball, over SLA, next-action highlighting) via Naffo MCP tools.",
+      "triggers": [
+        "process templates",
+        "process instances",
+        "process aging",
+        "ball in court",
+        "over SLA",
+        "advance stage",
+        "handoff",
+        "my ball",
+        "SLA aging",
+        "Lead to Cash",
+        "Procure to Pay"
       ]
     }
   ],

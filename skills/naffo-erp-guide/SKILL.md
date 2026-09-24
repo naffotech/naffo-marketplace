@@ -1,7 +1,7 @@
 ---
 name: naffo-erp-guide
-description: Use this skill when working with the Naffo ERP platform — creating sales or purchase invoices, recording payments/receipts, checking stock, tax summaries, module-specific workflows (dairy, manufacturing, etc.), CRM leads, task management, and company priorities / feedback loops. Guides correct tool usage, required fields, and validation rules.
-when_to_use: Naffo ERP, create invoice, record payment, check stock, tax report, dairy procurement, CRM lead, task, who am I in Naffo, connect to Naffo, Naffo tool usage, sale invoice, purchase invoice, bank account, party outstanding, trial balance, balance sheet, purchase order, goods receipt, batch tracking, warehouse, quotation, delivery challan, company priorities, feedback loop, weekly reset.
+description: Use this skill when working with the Naffo ERP platform — creating sales or purchase invoices, recording payments/receipts, checking stock, tax summaries, module-specific workflows (dairy, manufacturing, etc.), CRM leads, task management, company priorities / feedback loops, and process templates / SLA aging. Guides correct tool usage, required fields, and validation rules.
+when_to_use: Naffo ERP, create invoice, record payment, check stock, tax report, dairy procurement, CRM lead, task, who am I in Naffo, connect to Naffo, Naffo tool usage, sale invoice, purchase invoice, bank account, party outstanding, trial balance, balance sheet, purchase order, goods receipt, batch tracking, warehouse, quotation, delivery challan, company priorities, feedback loop, weekly reset, process templates, process aging, over SLA, my ball, advance process.
 ---
 
 # Naffo ERP Guide
@@ -353,6 +353,11 @@ naffo_list_priorities / naffo_get_priority / naffo_create_priority /
 naffo_update_priority / naffo_move_priority
 naffo_list_feedback_loops / naffo_create_feedback_loop / naffo_update_feedback_loop
 # Cap: max 3 ACTIVE in NOW. Weekly reset → offTarget loops + actionHints next actions.
+
+# Process templates + handoff/SLA aging
+naffo_list_process_templates / naffo_list_process_instances / naffo_get_process_instance /
+naffo_advance_process_instance / naffo_list_process_aging
+# Aging: overSla first, then mine (ball-in-court). Confirm before advance.
 ```
 
 ---

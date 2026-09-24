@@ -1,7 +1,7 @@
 {
   "name": "naffo",
-  "description": "Naffo ERP assistant for Claude Code — guided workflows and skills for day-to-day operations (invoices, payments, stock, dairy procurement, CRM, reports) and business planning (demand forecasting, production planning, inventory optimization, stock transfer recommendations) Includes company priorities and feedback-loop weekly reset guidance.",
-  "version": "1.12.0",
+  "description": "Naffo ERP assistant for Claude Code — guided workflows and skills for day-to-day operations (invoices, payments, stock, dairy procurement, CRM, reports) and business planning (demand forecasting, production planning, inventory optimization, stock transfer recommendations) Includes company priorities / feedback-loop weekly reset, and process templates + handoff/SLA aging guidance.",
+  "version": "1.9.0",
   "author": {
     "name": "Naffo Tech"
   },
