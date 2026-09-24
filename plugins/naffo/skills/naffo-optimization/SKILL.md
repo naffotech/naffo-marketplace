@@ -45,6 +45,38 @@ If a user explicitly requests evaluation-only output, do not use it to place
 orders. These tools require unrestricted company sales/product access and do
 not bypass business-memory permissions.
 
+### Outlet demand to production plan
+
+For a named retail outlet, first use `naffo_pos_list_outlets` to resolve its
+id. Pass that id as `outlet_id` to `naffo_forecast_multivariate`; this uses
+only that outlet's completed POS sales, not company-wide invoice sales. Do not
+claim an outlet forecast when `outlet_id` was omitted. An outlet forecast still
+needs at least 14 observed sale days for every selected product.
+
+For a production decision, use this sequence after backtesting or clearly
+labelling the forecast as LOW confidence:
+
+1. Inspect outlet stock and near-expiry batches with
+   `naffo_get_outlet_stock_matrix({ outletId, includeExpiring: true })` and
+   `naffo_list_batch_expiry_alerts`.
+2. Save only the reviewed point forecasts with
+   `naffo_save_forecast_for_production`. Pass the exact `forecast_dates` and
+   each product's exact `point` array returned by the forecast, plus a fresh
+   `idempotencyKey`. This stores planning demand only; it creates no inventory,
+   order, work order, or production run.
+3. Call `naffo_get_production_optimization_context` with the saved
+   `demand_forecast_ids`. It returns BOMs, sale prices, material and operating
+   costs, holding costs, capacity, maintenance buffers, stock by location and
+   committed work. Forecast provenance identifies the source outlet when one
+   was used.
+4. Stop if `readiness.ready` is false. Solve only the returned canonical
+   context. Submit a proposal with `naffo_submit_production_plan_result`; that
+   stores a reviewable recommendation and does not start production.
+
+Describe waste as an objective supported by actual expiry, shelf-life, holding
+and material-cost inputs. Do not promise lower waste or higher profit until a
+historical comparison against the current planning method supports it.
+
 ---
 
 ## Mental model
